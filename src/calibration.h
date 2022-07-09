@@ -76,7 +76,6 @@ bool _calibration_write(sensor_data_t sensor_datas[_sensor_num_g], int eeprom_ad
 
 bool calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, enum encoder_mode_g mode);
 
-#define CALIB_IMPL
 #include "impl/calibration_impl.h"
 
 #endif

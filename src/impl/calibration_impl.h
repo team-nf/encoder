@@ -1,8 +1,6 @@
 #ifndef _CALIB_IMPL_H_INCLUDED
 #define _CALIB_IMPL_H_INCLUDED
 
-#ifdef CALIB_IMPL
-
 bool _calibration_check(int eeprom_address, char calibration_start[16], char version[8], int sensor_num, char calibration_end[16]) {
 	/* BURAYA BAK eeprom read ne döndürüyor bilmiyorum */
 	calibration_data_t *read_data = eeprom_read(eeprom_address);
@@ -50,5 +48,4 @@ bool calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, 
 }
 
 
-#endif
 #endif
