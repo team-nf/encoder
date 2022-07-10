@@ -1,8 +1,27 @@
 #ifndef _CALIB_IMPL_H_INCLUDED
 #define _CALIB_IMPL_H_INCLUDED
 
+#ifdef CALIB_IMPL
+#include <EEPROM.h>
+
+
+void* _eeprom_read(int start_address, int size) {
+	byte *buffer = (byte *)malloc(size);
+	for (size_t i=0; i < size; i++) {
+		buffer[i] = EEPROM.read(start_address + i);
+	} return (void *)buffer;
+}
+
+
+void _eeprom_write(int start_address, void* buffer, int size) {
+	for (size_t i=0; i < size; i++) {
+		EEPROM.write(start_address + i, *((byte *)buffer + i));
+	}
+}
+
+
+
 bool _calibration_check(int eeprom_address, char calibration_start[16], char version[8], int sensor_num, char calibration_end[16]) {
-	/* BURAYA BAK eeprom read ne döndürüyor bilmiyorum */
 	calibration_data_t *read_data = eeprom_read(eeprom_address);
 	if (strncmp(calibration_start,	read_data->calibration_start, 16)) { return false; }
 	if (strncmp(version,			read_data->version		    , 8)) { return false; }
@@ -48,4 +67,5 @@ bool calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, 
 }
 
 
+#endif
 #endif

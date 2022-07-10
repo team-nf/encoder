@@ -1,17 +1,12 @@
-#include <EEPROM.h>
-
-#define _calibration_pin_g 2
-#define _sensor_num_g 3
-#define _DEBUG
-
-
+/* tunapro1234 */
+#define ENCODER_IMPL
+#include "encoder.h" 
+#define CALIB_IMPL
 #include "calibration.h"
 
 /* datanın tutulacağı yer */
 const sensor_data_t *_calibration_data_g;
 
-const int _first_sensor_pin_g						= A0;
-enum encoder_mode_g _mode_g							= em_analog_digital;
 
 /* _check
  * kalibrasyon okunmadan ya da yazılmadan önce calibration_check fonksiyonu ile data kontrol edilmeli
