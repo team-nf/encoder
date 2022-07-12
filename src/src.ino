@@ -13,11 +13,9 @@ const sensor_data_t *_calibration_data_g;
  *
  * TODO:
  *
- * eeprom read
- * kalibrasyon modu
-	 * calibration read and write check for fail
-	 *
- * _init_calibration_data struct init gnu-stylemış onu değiştir 
+ * calibration dump load
+ *
+ * 
  */
 
 
