@@ -31,13 +31,13 @@ void setup() {
 
 	bool calibration_rv = false;
 	// Kalibrasyon istenmiyorsa ve eski kalibrasyonda sıkıntı yoksa, kalibrasyonu atla
-	if (digitalRead(_calibration_pin_g) == LOW && calibration_check()) { calibration_rv = true; }
+	if (digitalRead(_calibration_pin_g) == LOW && calibration_check_eeprom()) { calibration_rv = true; }
 	// Kalibrasyon tamamlanana kadar tekrarla
 	while (calibration_rv == false) {
 #ifdef _DEBUG
 		Serial.println("Starting Calibration...");
 #endif
-		calibration_rv = calibrate_sensors(_calibration_data_g, _first_sensor_pin_g, _sensor_num_g, _mode_g);
+		calibration_rv = calibrate_sensors(_calibration_data_g);
 	} 
 
 }
