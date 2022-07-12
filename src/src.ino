@@ -8,50 +8,40 @@
 const sensor_data_t *_calibration_data_g;
 
 
-/* _check
- * kalibrasyon okunmadan ya da yazılmadan önce calibration_check fonksiyonu ile data kontrol edilmeli
- *
- * TODO:
- *
- * calibration dump load
- *
- * 
- */
-
-
 void setup() {
-#ifdef _DEBUG
 	Serial.begin(115200);
 	Serial.println("Started.");
-#endif
 
 	pinMode(_calibration_pin_g, INPUT);
-
 	_calibration_data_g = (sensor_data_t *)malloc(_sensor_num_g * sizeof(sensor_data_t));
+	
+	sensor_data_t sensor_datas[3] = { {0,1,2}, {3,4,5}, {5,6,7} };
 
-	bool calibration_rv = false;
-	// Kalibrasyon istenmiyorsa ve eski kalibrasyonda sıkıntı yoksa, kalibrasyonu atla
-	if (digitalRead(_calibration_pin_g) == LOW && calibration_check_eeprom()) { calibration_rv = true; }
-	// Kalibrasyon tamamlanana kadar tekrarla
-	while (calibration_rv == false) {
-#ifdef _DEBUG
-		Serial.println("Starting Calibration...");
-#endif
-		calibration_rv = calibrate_sensors(_calibration_data_g);
-	} 
+	/* for (int i=0; i < 3; i++) {
+		sensor_datas[i]._min	= 1;
+		sensor_datas[i]._normal = 2;
+		sensor_datas[i]._max	= 3;
+	} */
+	//memcpy(_calibration_data_g, sensor_datas, 3 * sizeof(sensot_data_t));
 
+	/* bu olaya el at */
+	calibration_data_t temp_data = { _example_meta_g, sensor_datas[0], sensor_datas[1], sensor_datas[2] };
+	calibration_write(&temp_data);
 }
 
 void loop() {
-#ifdef _DEBUG
-	if (_mode_g == em_analog) {
-		Serial.println("analog mode");
-	} else if (_mode_g == em_digital) {
-		Serial.println("digital mode");
-	} else if (_mode_g == em_analog_digital) {
-		Serial.println("analog+digital mode");
-	} 
-#endif
+	if (calibration_check_eeprom()) {
+		calibration_read(_calibration_data_g);
+		for (int i=0; i < 3; i++) {
+			Serial.print(_calibration_data_g[i]._min);
+			Serial.print(_calibration_data_g[i]._normal);
+			Serial.print(_calibration_data_g[i]._max);
+			Serial.print(" ");
+		} Serial.print("\n");
+	} else {
+		Serial.println("Calibration check failed.");
+	}
+	
 	digitalWrite(LED_BUILTIN, HIGH);
 	delay(1000);
 	digitalWrite(LED_BUILTIN, LOW);

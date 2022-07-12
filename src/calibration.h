@@ -45,12 +45,12 @@ bool _calibration_check_sensor_data(const sensor_data_t* sensor_data, int sensor
 #define calibration_read(buffer) _calibration_read(buffer, _eeprom_address_g, _sensor_num_g)
 bool _calibration_read(sensor_data_t* buffer, int eeprom_address, int sensor_num);
 
-#define calibration_write(sensor_datas) _calibration_write(sensor_datas, _eeprom_address_g, &_example_meta_g)
+#define calibration_write(sensor_datas) _calibration_write(sensor_datas, _eeprom_address_g)
 bool _calibration_write(const calibration_data_t* data, int eeprom_address);
 
 
-#define calibrate_sensors(buffer) _calibrate_sensors(buffer, _first_sensor_pin_g, _sensor_num_g, _mode_g)
-bool _calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, enum encoder_mode_g mode);
+#define calibrate_sensors(buffer) _calibrate_sensors(buffer, _first_sensor_pin_g, _sensor_num_g, _mode_g, &_example_meta_g)
+bool _calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, enum encoder_mode_g mode, const calibration_meta_t* example_meta);
 
 
 #ifdef CALIB_IMPL

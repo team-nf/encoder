@@ -3,7 +3,6 @@
 
 #ifdef CALIB_IMPL
 #include <EEPROM.h>
-/* #include "../calibration.h" */
 
 
 void* _eeprom_read(int start_address, int size) {
@@ -81,13 +80,7 @@ bool _calibration_write(const calibration_data_t* data, int eeprom_address) {
 }
 
 
-bool _calibration_update(const calibration_data_t* data, int eeprom_address) {
-	calibration_data_t *read = (calibration_data_t *)_eeprom_read(eeprom_address, sizeof(calibration_data_t));
-	return true;
-}
-
-
-bool _calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, enum encoder_mode_g mode) {
+bool _calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, enum encoder_mode_g mode, const calibration_meta_t* example_meta) {
 	return true;
 }
 
