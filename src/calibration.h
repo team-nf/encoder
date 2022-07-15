@@ -42,6 +42,11 @@ bool calibration_check_exists(const calibration_meta_t* data_header, const calib
 bool calibration_check_sensor_data(const sensor_data_t* sensor_data, int sensor_num);
 bool calibration_check_equals(const calibration_data_t* data1, const calibration_data_t* data2);
 
+#ifdef _DEBUG
+void calibration_print(const calibration_data_t* data);
+#endif
+
+
 #define calibrate_sensors(buffer) _calibrate_sensors(buffer, _first_sensor_pin_g, _sensor_num_g, _mode_g, &_example_meta_g)
 bool _calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, enum encoder_mode_g mode, const calibration_meta_t* example_meta);
 

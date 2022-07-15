@@ -6,6 +6,16 @@
 #define _sensor_num_g 3
 #define _DEBUG
 
+/* release için derleme hızı artsın diye */
+#ifdef _DEBUG
+#define serialf(...) ({ \
+	int _size = snprintf(NULL, 0, __VA_ARGS__) + 1; \
+	char* _str = (char *)malloc(_size * sizeof(char)); \
+	snprintf(_str, _size, __VA_ARGS__); \
+	Serial.print(_str); \
+})
+#endif
+
 
 enum encoder_mode_g {
 	em_analog,

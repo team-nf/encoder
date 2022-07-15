@@ -60,6 +60,18 @@ bool _calibration_check(const calibration_data_t *data, const calibration_meta_t
 }
 
 
+#ifdef _DEBUG
+void calibration_print(const calibration_data_t* data) {
+	serialf("Start: %s\nVersion: %s\nSensor Count: %d\n", \
+		data->header.calibration_start, data->header.version, data->header.sensor_num);
+	for (int i=0; i < data->header.sensor_num; i++) {
+		serialf("\tSensor %d: %d %d %d\n", data->sensor_datas[i]._min, \
+			data->sensor_datas[i]._normal, data->sensor_datas[i]._max);
+	}
+}
+#endif
+
+
 bool _calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, enum encoder_mode_g mode, const calibration_meta_t* example_meta) {
 	return true;
 }
