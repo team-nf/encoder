@@ -6,6 +6,7 @@
 #define _sensor_num_g 3
 #define _DEBUG
 
+
 /* release için derleme hızı artsın diye */
 #ifdef _DEBUG
 #define serialf(...) ({ \

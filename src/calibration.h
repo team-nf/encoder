@@ -3,6 +3,8 @@
 
 #include "encoder.h"
 
+#define _calibration_length_g 12
+
 #define _eeprom_address_g 0
 #define _calibration_start_g "calibeg"
 #define _version_g "0000000"
