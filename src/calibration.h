@@ -24,19 +24,19 @@ const calibration_meta_t _example_meta_g = { _calibration_start_g, _version_g, _
 	
 
 #define calibration_read(start_address) \
-	(calibration_data_t *)_eeprom_read(start_address, sizeof(calibration_data_t))
-byte* _eeprom_read(int start_address, int size);
+	(calibration_data_t *)eeprom_read(start_address, sizeof(calibration_data_t))
+byte* eeprom_read(int start_address, int size);
 
 
 #define calibration_write(start_address, buffer) \
-	_eeprom_write(start_address, (byte *)buffer, sizeof(calibration_data_t))
-void _eeprom_write(int start_address, void* buffer, int size);
+	eeprom_write(start_address, (byte *)buffer, sizeof(calibration_data_t))
+void eeprom_write(int start_address, void* buffer, int size);
 
 
 
-#define calibration_check_eeprom() _calibration_check_eeprom(_eeprom_address_g, &_example_meta_g)
-bool _calibration_check_eeprom(int eeprom_address, const calibration_meta_t* example_meta);
-bool _calibration_check(const calibration_data_t *data, const calibration_meta_t* example_meta);
+#define _calibration_check_eeprom() _calibration_check_eeprom(_eeprom_address_g, &_example_meta_g)
+bool calibration_check_eeprom(int eeprom_address, const calibration_meta_t* example_meta);
+bool calibration_check(const calibration_data_t *data, const calibration_meta_t* example_meta);
 
 bool calibration_check_exists(const calibration_meta_t* data_header, const calibration_meta_t* example_meta);
 bool calibration_check_sensor_data(const sensor_data_t* sensor_data, int sensor_num);
@@ -47,8 +47,8 @@ void calibration_print(const calibration_data_t* data);
 #endif
 
 
-#define calibrate_sensors(buffer) _calibrate_sensors(buffer, _first_sensor_pin_g, _sensor_num_g, _mode_g, &_example_meta_g)
-bool _calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, enum encoder_mode_g mode, const calibration_meta_t* example_meta);
+#define _calibrate_sensors(buffer) _calibrate_sensors(buffer, _first_sensor_pin_g, _sensor_num_g, _mode_g, &_example_meta_g)
+bool calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, enum encoder_mode_g mode, const calibration_meta_t* example_meta);
 
 
 #ifdef CALIB_IMPL

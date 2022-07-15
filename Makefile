@@ -1,4 +1,4 @@
-ino_file = src/main.ino
+ino_file = src/src.ino
 
 app:
 	arduino-cli compile $(ino_file) -b arduino:avr:uno

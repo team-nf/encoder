@@ -5,7 +5,7 @@
 #include <EEPROM.h>
 
 
-byte* _eeprom_read(int start_address, int size) {
+byte* eeprom_read(int start_address, int size) {
 	byte *buffer = (byte *)malloc(size);
 	for (size_t i=0; i < size; i++) {
 		buffer[i] = EEPROM.read(start_address + i);
@@ -13,7 +13,7 @@ byte* _eeprom_read(int start_address, int size) {
 }
 
 
-void _eeprom_write(int start_address, byte* buffer, int size) {
+void eeprom_write(int start_address, byte* buffer, int size) {
 	for (size_t i=0; i < size; i++) {
 		EEPROM.write(start_address + i, buffer[i]);
 	}
@@ -47,13 +47,13 @@ bool calibration_check_equals(const calibration_data_t* data1, const calibration
 	} return true;
 }
 
-bool _calibration_check_eeprom(int eeprom_address, const calibration_meta_t* example_meta) {
+bool calibration_check_eeprom(int eeprom_address, const calibration_meta_t* example_meta) {
 	calibration_data_t *read_data = calibration_read(eeprom_address);
-	bool rv = _calibration_check(read_data, example_meta);
+	bool rv = calibration_check(read_data, example_meta);
 	free(read_data); return rv;
 }
 
-bool _calibration_check(const calibration_data_t *data, const calibration_meta_t* example_meta) {
+bool calibration_check(const calibration_data_t *data, const calibration_meta_t* example_meta) {
 	if (!calibration_check_exists(&data->header, example_meta))											{ return false; }
 	if (!calibration_check_sensor_data((sensor_data_t *)&data->sensor_datas, example_meta->sensor_num))	{ return false; }
 	return true;
@@ -72,7 +72,7 @@ void calibration_print(const calibration_data_t* data) {
 #endif
 
 
-bool _calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, enum encoder_mode_g mode, const calibration_meta_t* example_meta) {
+bool calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, enum encoder_mode_g mode, const calibration_meta_t* example_meta) {
 	return true;
 }
 
