@@ -1,51 +1,67 @@
-/* tunapro1234 */
-#define ENCODER_IMPL
-#include "encoder.h" 
+#include <EEPROM.h>
+
+#include "encoder.h"
 #define CALIB_IMPL
 #include "calibration.h"
 
-/* datanın tutulacağı yer */
-const sensor_data_t *_calibration_data_g;
 
+calibration_data_t *_calibration_data_g;
+
+void calibration_print(const calibration_data_t* data) {
+	Serial.print("Start: ");	
+	Serial.println(data->header.calibration_start);
+	Serial.print("Version: ");	
+	Serial.println(data->header.version);
+	Serial.print("Encoder Count: ");
+	Serial.println(data->header.sensor_num);
+	for (int i=0; i < data->header.sensor_num; i++) {
+		Serial.print("\tSensor ");
+		Serial.print(i);
+		Serial.print(": ");
+		Serial.print(data->sensor_datas[i]._min);
+		Serial.print(" ");
+		Serial.print(data->sensor_datas[i]._normal);
+		Serial.print(" ");
+		Serial.println(data->sensor_datas[i]._max);
+	}
+}
 
 void setup() {
 	Serial.begin(115200);
-	Serial.println("Started.");
+	Serial.println("\nStarted.");
 
-	pinMode(_calibration_pin_g, INPUT);
-	_calibration_data_g = (sensor_data_t *)malloc(_sensor_num_g * sizeof(sensor_data_t));
+	_calibration_data_g = (calibration_data_t *)malloc(_sensor_num_g * sizeof(calibration_data_t));
+	_calibration_data_g->header = _example_meta_g;
+	for (int i=0; i < 3; i++)
+		_calibration_data_g->sensor_datas[i] = {i, i+1, i+2};
+	Serial.println("Configuration data: ");
+	calibration_print(_calibration_data_g);
 	
-	sensor_data_t sensor_datas[3] = { {0,1,2}, {3,4,5}, {5,6,7} };
-
-	/* for (int i=0; i < 3; i++) {
-		sensor_datas[i]._min	= 1;
-		sensor_datas[i]._normal = 2;
-		sensor_datas[i]._max	= 3;
-	} */
-	//memcpy(_calibration_data_g, sensor_datas, 3 * sizeof(sensot_data_t));
-
-	/* bu olaya el at */
-	calibration_data_t temp_data = { _example_meta_g, sensor_datas[0], sensor_datas[1], sensor_datas[2] };
-	calibration_write(&temp_data);
+	//_eeprom_write(0, (byte *)_calibration_data_g, sizeof(calibration_data_t));
+	calibration_write(0, _calibration_data_g);
+	Serial.println("Data written to eeprom (i guess).");
 }
 
 void loop() {
-	if (calibration_check_eeprom()) {
-		calibration_read(_calibration_data_g);
-		for (int i=0; i < 3; i++) {
-			Serial.print(_calibration_data_g[i]._min);
-			Serial.print(_calibration_data_g[i]._normal);
-			Serial.print(_calibration_data_g[i]._max);
-			Serial.print(" ");
-		} Serial.print("\n");
-	} else {
-		Serial.println("Calibration check failed.");
-	}
+	Serial.println("\nLoop begin");
+	//calibration_data_t *read_data = (calibration_data_t *)_eeprom_read(0, sizeof(calibration_data_t));
 	
-	digitalWrite(LED_BUILTIN, HIGH);
-	delay(1000);
-	digitalWrite(LED_BUILTIN, LOW);
-	delay(1000);
-}
+	//calibration_data_t *read_data = (calibration_data_t *)malloc(sizeof(calibration_data_t));
+	//calibration_read(read_data->sensor_datas);
 
+	calibration_data_t *read_data = calibration_read(0);
+
+	calibration_print(read_data);
+	Serial.print("Check Exists: ");
+	Serial.println(calibration_check_exists(&read_data->header, &_calibration_data_g->header));
+	Serial.print("Check Sensor Data: ");
+	Serial.println(calibration_check_sensor_data(read_data->sensor_datas, _calibration_data_g->header.sensor_num));
+
+	Serial.print("Check: ");
+	Serial.println(_calibration_check(read_data, &_calibration_data_g->header));
+	Serial.println("End.");
+
+	free(read_data);
+	delay(12000);
+}
 

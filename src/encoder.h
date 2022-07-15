@@ -7,12 +7,6 @@
 #define _DEBUG
 
 
-#define _calibration_start_g "calibrationstart"
-#define _calibration_end_g "calibration_end_"
-#define _version_g "00000000"
-#define _eeprom_address_g 0
-
-
 enum encoder_mode_g {
 	em_analog,
 	em_digital,
