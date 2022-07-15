@@ -17,6 +17,13 @@
 })
 #endif
 
+#define blink(time, repetition) ({ \
+	for (int i=0; i < repetition+2; i++) { \
+		digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN)); \
+		delay(time); \
+	} \
+})
+
 
 enum encoder_mode_g {
 	em_analog,
