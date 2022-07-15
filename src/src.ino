@@ -20,7 +20,7 @@ void setup() {
 	calibration_print(_calibration_data_g);
 	
 	calibration_write(0, _calibration_data_g);
-	Serial.println("Data written to eeprom (i guess).");
+	Serial.println("Data written to eeprom.");
 }
 
 void loop() {

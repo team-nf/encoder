@@ -4,6 +4,7 @@ app:
 
 upload:
 	sudo /home/tunapro/.programs/arduino-cli/arduino-cli compile --upload src/src.ino -b arduino:avr:uno -p /dev/ttyUSB0
+# 	sudo /home/tunapro/.programs/arduino-cli/arduino-cli upload src/src.ino -b arduino:avr:uno -p /dev/ttyUSB0 && echo "done."
 
 monitor:
 	sudo /home/tunapro/.programs/arduino-cli/arduino-cli monitor -p /dev/ttyUSB0 -c baudrate=115200

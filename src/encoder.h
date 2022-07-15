@@ -13,6 +13,7 @@
 	char* _str = (char *)malloc(_size * sizeof(char)); \
 	snprintf(_str, _size, __VA_ARGS__); \
 	Serial.print(_str); \
+	free(_str); \
 })
 #endif
 
