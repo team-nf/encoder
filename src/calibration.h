@@ -15,7 +15,7 @@ typedef struct calibration_meta_t {
 	char calibration_start[8];
 	char version[8];
 	int sensor_num;
-};
+} calibration_meta_t;
 
 typedef struct calibration_data_t {
 	calibration_meta_t header;
@@ -38,7 +38,7 @@ void eeprom_write(int start_address, void* buffer, int size);
 
 #define _calibration_check_eeprom() _calibration_check_eeprom(_eeprom_address_g, &_example_meta_g)
 bool calibration_check_eeprom(int eeprom_address, const calibration_meta_t* example_meta);
-bool calibration_check(const calibration_data_t *data, const calibration_meta_t* example_meta);
+bool calibration_check(const calibration_data_t* data, const calibration_meta_t* example_meta);
 
 bool calibration_check_exists(const calibration_meta_t* data_header, const calibration_meta_t* example_meta);
 bool calibration_check_sensor_data(const sensor_data_t* sensor_data, int sensor_num);

@@ -53,7 +53,7 @@ bool calibration_check_eeprom(int eeprom_address, const calibration_meta_t* exam
 	free(read_data); return rv;
 }
 
-bool calibration_check(const calibration_data_t *data, const calibration_meta_t* example_meta) {
+bool calibration_check(const calibration_data_t* data, const calibration_meta_t* example_meta) {
 	if (!calibration_check_exists(&data->header, example_meta))											{ return false; }
 	if (!calibration_check_sensor_data((sensor_data_t *)&data->sensor_datas, example_meta->sensor_num))	{ return false; }
 	return true;

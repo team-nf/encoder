@@ -4,7 +4,6 @@
 #define CALIB_IMPL
 #include "calibration.h"
 
-#define _NOSENSOR
 /* 3 pinden 1 saniyede 2976 okuma (arduino uno)*/
 
 calibration_data_t *_calibration_data_g;
@@ -59,8 +58,6 @@ bool calib_test(calibration_data_t* _data, int first_sensor) {
 			read_values[i]._min, read_values[i]._normal, read_values[i]._max);
 #endif
 
-	/* yeni malloc yerine direkt _data->sensor_datas da kullanılabilirdi? *
-	 * ama datanın geçerli olup olmadığını görmeden yazmak mantıklı değil */
 	// eğer okunan veri geçerli değilse değişiklikleri verilen dataya yazmadan çık
 	if (calibration_check_sensor_data(read_values, sensor_num) == 0) { return false; }
 	// okunan veri geçerliyse dataya yaz
