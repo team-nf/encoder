@@ -49,8 +49,9 @@ void calibration_print(const calibration_data_t* data);
 #endif
 
 
-#define _calibrate_sensors(buffer) _calibrate_sensors(buffer, _first_sensor_pin_g, _sensor_num_g, _mode_g, &_example_meta_g)
-bool calibrate_sensors(sensor_data_t* buffer, int first_sensor, int sensor_num, enum encoder_mode_g mode, const calibration_meta_t* example_meta);
+#define _calibrate_sensors(_data) _calibrate_sensors(_data, _first_sensor_pin_g, _mode_g)
+bool calibrate_sensors(calibration_data_t* _data, int first_sensor, enum encoder_mode_g mode);
+
 
 
 #ifdef CALIB_IMPL
