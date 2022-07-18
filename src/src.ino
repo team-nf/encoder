@@ -1,6 +1,7 @@
 #include <EEPROM.h>
 
-#include "encoder.h"
+/* calibration.h dosyası zaten headerı includelıyor */
+// #include "header.h"
 #define CALIB_IMPL
 #include "calibration.h"
 
@@ -39,8 +40,7 @@ void loop() {
 	bool rv = calibrate_sensors(_calibration_data_g, _first_sensor_pin_g, _mode_g);
 	serialf("Return Value: %d\n", rv);
 
-	free(_calibration_data_g);
-	Serial.println("loop ended.");
+	Serial.println("Loop ended.");
 	delay(9000);
 }
 

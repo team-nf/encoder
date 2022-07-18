@@ -1,12 +1,5 @@
-#ifndef _ENCODER_H_INCLUDED
-#define _ENCODER_H_INCLUDED
-
-
-#define _calibration_pin_g 2
-#define _sensor_num_g 3
-#define _NOSENSOR
-#define _DEBUG
-
+#ifndef _HEADER_H_INCLUDED
+#define _HEADER_H_INCLUDED
 
 /* release için derleme hızı artsın diye */
 #ifdef _DEBUG
@@ -36,12 +29,15 @@ enum encoder_mode_g {
 };
 
 
-const int _first_sensor_pin_g	= A0;
-enum encoder_mode_g _mode_g		= em_analog_digital;
-
-
 typedef struct sensor_data_t {
 	int _min, _normal, _max;
 } sensor_data_t;
 
+#endif
+
+/* config file include */
+
+#ifndef _CONFIG_H_INCLUDED
+#define _CONFIG_H_INCLUDED
+#include "config.h"
 #endif
