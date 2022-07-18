@@ -9,6 +9,12 @@
 
 calibration_data_t *_calibration_data_g;
 
+/* encoder readini olabildiğince hızlandırmak için macro yapılabilir */
+void encoder_read(int* buffer, int sensor_num, int first_sensor_pin) {
+	for (int i=0; i < sensor_num; i++)
+		buffer[i] = analogRead(first_sensor_pin+i);
+}
+
 
 void setup() {
 #ifdef _DEBUG
@@ -23,8 +29,10 @@ void setup() {
 	if (calibration_check(_calibration_data_g, &_example_meta_g)) valid_calib = 1;
 
 	if (!valid_calib || digitalRead(_calibration_pin_g) == HIGH) {
-		while (!valid_calib)
+		while (!valid_calib) {
 			valid_calib = calibrate_sensors(_calibration_data_g, _first_sensor_pin_g, _mode_g);
+			serialf("Return Value: %d\n", valid_calib);
+		}
 		calibration_write(_eeprom_address_g, _calibration_data_g);
 	}
 #ifdef _DEBUG
@@ -36,9 +44,9 @@ void setup() {
 
 void loop() {
 	Serial.println("Loop started.");
-
-	bool rv = calibrate_sensors(_calibration_data_g, _first_sensor_pin_g, _mode_g);
-	serialf("Return Value: %d\n", rv);
+	/* int *sensor_read = (int *)malloc(_sensor_num_g * sizeof(int)); */
+	int sensor_read[_sensor_num_g];
+	encoder_read(sensor_read, _sensor_num_g, _first_sensor_pin_g);
 
 	Serial.println("Loop ended.");
 	delay(9000);
