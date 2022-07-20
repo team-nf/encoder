@@ -65,7 +65,7 @@ void calibration_print(const calibration_data_t* data) {
 	serialf("Start: %s\nVersion: %s\nSensor Count: %d\n", \
 		data->header.calibration_start, data->header.version, data->header.sensor_num);
 	for (int i=0; i < data->header.sensor_num; i++) {
-		serialf("\tSensor %d: %d %d %d\n", data->sensor_datas[i]._min, \
+		serialfn("\tSensor %d: %d %d %d", data->sensor_datas[i]._min, \
 			data->sensor_datas[i]._normal, data->sensor_datas[i]._max);
 	}
 }
@@ -73,11 +73,9 @@ void calibration_print(const calibration_data_t* data) {
 
 
 bool calibrate_sensors(calibration_data_t* _data, int first_sensor, enum encoder_mode_g mode) {
-#ifdef _DEBUG
-	Serial.println("Starting calibration.");
+	serialdn("Starting calibration.");
 	/* Eğer debug modundaysak gönderilen datayı kontrol et */
-	if (!calibration_check_exists(&_data->header, &_example_meta_g)) { return false; }
-#endif
+	dbg(if (!calibration_check_exists(&_data->header, &_example_meta_g)) { return false; })
 	/* Biraz da olsun hız kazanmak için */
 	int sensor_num = _data->header.sensor_num;
 	/* Okunan değerleri kaydetmek için kullanılacak array */
@@ -90,7 +88,7 @@ bool calibrate_sensors(calibration_data_t* _data, int first_sensor, enum encoder
 	}
 
 	/* ufak bir işaret */
-	blink(100, 10);
+	blink(100, 30);
 	/* counter sensörlerin kaç kere okunduğunu saymak için */
 	unsigned long counter = 0, start_time = millis();
 	/* toplamda 6 saniye boyunca sensörlerden veri okunacak  */
@@ -105,7 +103,7 @@ bool calibrate_sensors(calibration_data_t* _data, int first_sensor, enum encoder
 			else if (read_value > read_values[i]._max)	read_values[i]._max = read_value;
 		} counter++;
 	/* bittiğine dair sinyal */
-	} blink(100, 10);
+	} blink(100, 30);
 	
 
 #ifdef _NOSENSOR
@@ -116,7 +114,7 @@ bool calibrate_sensors(calibration_data_t* _data, int first_sensor, enum encoder
 
 #ifdef _DEBUG
 	/* biraz debug info */
-	serialf("Read %d sensors %lu times in %d seconds.\n", sensor_num, counter, _calibration_length_g);
+	serialfn("Read %d sensors %lu times in %d seconds.", sensor_num, counter, _calibration_length_g);
 	for (int i=0; i < sensor_num; i++)
 		serialf("Sensor %d:\n\t[min]\t\tread: %d\n\t[normal]\tread: %d\n\t[max]\t\tread: %d\n", i,	\
 			read_values[i]._min, read_values[i]._normal, read_values[i]._max);

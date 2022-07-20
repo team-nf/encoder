@@ -3,11 +3,8 @@
 
 #include "header.h"
 
-#define _calibration_length_g 12
-
 #define _eeprom_address_g 0
 #define _calibration_start_g "calibeg"
-#define _version_g "0000000"
 #define _version_skip_key_g "9999999"
 
 
@@ -44,9 +41,7 @@ bool calibration_check_exists(const calibration_meta_t* data_header, const calib
 bool calibration_check_sensor_data(const sensor_data_t* sensor_data, int sensor_num);
 bool calibration_check_equals(const calibration_data_t* data1, const calibration_data_t* data2);
 
-#ifdef _DEBUG
-void calibration_print(const calibration_data_t* data);
-#endif
+dbg(void calibration_print(const calibration_data_t* data));
 
 
 #define _calibrate_sensors(_data) _calibrate_sensors(_data, _first_sensor_pin_g, _mode_g)

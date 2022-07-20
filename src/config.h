@@ -1,3 +1,4 @@
+#define _calibration_length_g 12
 #define _calibration_pin_g 2
 #define _sensor_num_g 3
 #define _NOSENSOR
