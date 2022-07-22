@@ -1,6 +1,6 @@
 from math import *
 
-_sensor_num_g = 5
+_sensor_num_g = 3
 
 class sensor_data_t:
 	def __init__(self, _min, _normal, _max):
@@ -8,48 +8,21 @@ class sensor_data_t:
 		self._min = _min
 		self._max = _max
 	
-	def __str__(self): return f"({self._min}, {self._normal}, {self._max})"
-	def __repr__(self): return f"({self._min}, {self._normal}, {self._max})"
-
 
 class position_t:
 	def __init__(self, x, y):
 		self.x = x
 		self.y = y
-	
-	def __str__(self): return f"({self.x:.2f}, {self.y:.2f})"
-	def __repr__(self): return f"({self.x:.2f}, {self.y:.2f})"
-
 
 
 def _calc_sensor_angles(sensor_num, radians=True):
 	if radians: return [(2*pi / sensor_num) * i for i in range(sensor_num)]
 	else: return [(360 / sensor_num) * i for i in range(sensor_num)]
 
-
 def calc_sensor_positions(sensor_num):
 	angles = _calc_sensor_angles(sensor_num)
 	return [position_t(cos(angles[i]), sin(angles[i])) for i in range(sensor_num)]
 
-
-
-def calc_intersec_ys(sensor_positions, distance_to_sensors): 
-	if len(sensor_positions) != len(distance_to_sensors): return Exception("Internal Failure")
-	sensor_num, dists, positions = len(sensor_positions), distance_to_sensors, sensor_positions
-
-	return [_calc_circle_intersec_y(dists[i], dists[j], positions[i].y, positions[j].y)
-			for i, j in _calc_samex_sensors(sensor_num)]
-
-# 	ys = []
-# 	samex = _calc_samex_sensors(sensor_num)
-# 	for i, j in samex:
-# 		ys.append(_calc_circle_intersec_y(dists[i], dists[j], positions[i].y, positions[j].y))
-#	return ys
-
-
-def _calc_circle_intersec_y(c1_dist, c2_dist, c1_posy, c2_posy):
-	# çemberlerin merkezlerinin apsisi aynı olmalı
-	return (c1_dist**2 - c2_dist**2 + c2_posy**2 - c1_posy**2) / (2 * (c2_posy-c1_posy))
 
 
 def _calc_samex_sensors(sensor_num):
@@ -64,6 +37,65 @@ def _calc_samex_sensors(sensor_num):
 			samex.append((i, rangles.index(angle)))
 	return samex
 
+def _calc_intersec_y(s1_dist, s2_dist, s1_posy, s2_posy):
+	# çemberlerin merkezlerinin apsisi aynı olmalı
+	return (s1_dist**2 - s2_dist**2 + s2_posy**2 - s1_posy**2) / (2 * (s2_posy-s1_posy))
+
+def calc_intersec_ys(distance_to_sensors, sensor_positions, samex):
+	if len(sensor_positions) != len(distance_to_sensors): return Exception("Internal Failure")
+	sensor_num, dists, positions = len(sensor_positions), distance_to_sensors, sensor_positions
+
+	return [_calc_intersec_y(dists[i], dists[j], \
+			positions[i].y, positions[j].y) for i, j in samex]
+
+def _calc_intersec_x(target_y, s1_dist, s2_dist, s1_pos, s2_pos):
+	return (-s1_pos.x**2 + s2_pos.x**2 + (target_y - s2_pos.y)**2 - (target_y - s1_pos.y)**2 + s1_dist**2 - s2_dist**2) / (2 * (s2_pos.x - s1_pos.x))
+
+def calc_intersec_xs(target_ys, distance_to_sensors, sensor_positions, samex):
+	#	 0 ve 1. sensörün apsisleri her zaman farklı olmak zorunda 
+	# olduğundan direkt o ikisini kullanarak hesaplama yapabiliriz
+	return [_calc_intersec_x(y, distance_to_sensors[0], distance_to_sensors[1], \
+			sensor_positions[0], sensor_positions[1]) for y in target_ys]
+
+
+# bu fonksiyonun nasıl geliştirileceği testlerde belirlenecek
+def _calc_distance_to_sensor(sensor_reading):
+	return NotImplemented
+
+
+def calc_distance_to_sensors(sensor_readings):
+	return [_calc_distance_to_sensor(i) for i in sensor_readings]
+
+
+def calc_distance_to_sensors_test(sensor_positions, target_pos):
+	return [sqrt((spos.x - target_pos.x)**2 + (spos.y - target_pos.y)**2)
+			for spos in sensor_positions]
+
+
+def calc_target_pos(distances, positions, samex):
+	target_ys = calc_intersec_ys(distances, positions, samex)
+	target_xs = calc_intersec_xs(target_ys, distances, positions, samex)
+	
+	return position_t(sum(target_xs) / len(target_xs), sum(target_ys) / len(target_ys))
+
+
+def main():
+	positions = calc_sensor_positions(_sensor_num_g)
+	samex = _calc_samex_sensors(_sensor_num_g)
+
+	test_angle = radians(30)
+	test_target = position_t(cos(test_angle), sin(test_angle))
+	distances = calc_distance_to_sensors_test(positions, test_target)
+
+	calculated = calc_target_pos(distances, positions, samex)
+	print("created: ", cos(test_angle), sin(test_angle))
+	print("calculated: ", calculated.x, calculated.y)
+
+
+if __name__ == "__main__":
+	main()
+
+
 
 def __polygon_samex_test(_start=3, _end=1000):
 	# işte bu
@@ -76,31 +108,7 @@ def __polygon_samex_test(_start=3, _end=1000):
 			if angle == 180: continue
 			if angle in rangles:
 				saved_indexes.append(i)
-		if len(saved_indexes) == 0: print(f"ERROR at sensor {sensor_num}")
+		if len(saved_indexes) == 0: print(f"error at sensor {sensor_num}")
 		if sensor_num % 100 == 0: print(f"at sensor: {sensor_num}")
 
 
-# bu fonksiyonun nasıl geliştirileceği testlerde belirlenecek
-def _calc_distance_to_sensor(sensor_reading):
-	return NotImplemented
-
-
-# bu fonksiyonun nasıl geliştirileceği testlerde belirlenecek
-def calc_distance_to_sensors(sensor_readings):
-	return [_calc_distance_to_sensor(i) for i in sensor_readings]
-
-
-def calc_distance_to_sensors_test(sensor_positions, target_pos):
-	return [sqrt((spos.x - target_pos.x)**2 + (spos.y - target_pos.y)**2)
-			for spos in sensor_positions]
-		
-
-
-def main():
-	test_target = position_t(1, 1)
-	positions = calc_sensor_positions(_sensor_num_g)
-	distances = calc_distance_to_sensors_test(positions, test_target)
-	print(calc_intersec_ys(positions, distances))
-
-if __name__ == "__main__":
-	main()
