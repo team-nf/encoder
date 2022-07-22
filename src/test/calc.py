@@ -103,35 +103,21 @@ def main():
 	positions = calc_sensor_positions(_sensor_num_g)
 	samex = _calc_samex_sensors2(_sensor_num_g)
 
-	test_angle = radians(30)
-	test_target = position_t(cos(test_angle), sin(test_angle))
-	distances = calc_distance_to_sensors_test(positions, test_target)
+	tolerance = 0.0000000000001
+	for angle in range(360):
+		test_angle = radians(angle)
+		test_target = position_t(cos(test_angle), sin(test_angle))
+		distances = calc_distance_to_sensors_test(positions, test_target)
 
-	print("created: ", test_target)
-	print("calculated: ", calc_target_pos(distances, positions, samex))
-	# print(_calc_samex_sensors(11), _calc_samex_sensors2(11), sep="\n")
-
-	for i in range(100):
-		if _calc_samex_sensors(i).sort() != _calc_samex_sensors2(i).sort(): print(i, end=", ")
+		calculated = calc_target_pos(distances, positions, samex)
+		if not test_target.x - tolerance < calculated.x < test_target.x + tolerance: print("error, ", angle)
+		elif not test_target.y - tolerance < calculated.y < test_target.y + tolerance: print("error, ", angle)
+		# print("created: ", test_target.x, test_target.y)
+		# print("calculated: ", calculated.x, calculated.y)
 
 
 if __name__ == "__main__":
+	print("Started.")
 	main()
-
-
-
-def __polygon_samex_test(_start=3, _end=1000):
-	# işte bu
-	for sensor_num in range(3, 1000):
-		angles = [(360 / sensor_num) * i for i in range(sensor_num)]
-		rangles = [360 - angle for angle in angles]
-
-		saved_indexes = []
-		for i, angle in enumerate(angles):
-			if angle == 180: continue
-			if angle in rangles:
-				saved_indexes.append(i)
-		if len(saved_indexes) == 0: print(f"error at sensor {sensor_num}")
-		if sensor_num % 100 == 0: print(f"at sensor: {sensor_num}")
-
+	print("Done.")
 
