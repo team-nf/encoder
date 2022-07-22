@@ -14,6 +14,8 @@ class position_t:
 		self.x = x
 		self.y = y
 
+	def __repr__(self): return f"({self.x:.6f}, {self.y:.6f})"
+
 
 def _calc_sensor_angles(sensor_num, radians=True):
 	if radians: return [(2*pi / sensor_num) * i for i in range(sensor_num)]
@@ -23,6 +25,24 @@ def calc_sensor_positions(sensor_num):
 	angles = _calc_sensor_angles(sensor_num)
 	return [position_t(cos(angles[i]), sin(angles[i])) for i in range(sensor_num)]
 
+
+
+def _calc_samex_sensors2(sensor_num):
+	angles = _calc_sensor_angles(sensor_num, radians=False)
+	
+	tolerance = 0.000000000001
+	i = 1
+	samex = []
+	while i < sensor_num:
+		j = sensor_num - i
+		while j > i:
+			# print(f"i: {i}, j: {j}, angle: {angles[i]}, rangle: {angles[j]}")
+			if 360 - tolerance < angles[i] + angles[j] < 360 + tolerance: 
+				samex.append((i, j))
+				break
+			j = j - 1
+		i=i+1
+	return samex
 
 
 def _calc_samex_sensors(sensor_num):
@@ -81,15 +101,18 @@ def calc_target_pos(distances, positions, samex):
 
 def main():
 	positions = calc_sensor_positions(_sensor_num_g)
-	samex = _calc_samex_sensors(_sensor_num_g)
+	samex = _calc_samex_sensors2(_sensor_num_g)
 
 	test_angle = radians(30)
 	test_target = position_t(cos(test_angle), sin(test_angle))
 	distances = calc_distance_to_sensors_test(positions, test_target)
 
-	calculated = calc_target_pos(distances, positions, samex)
-	print("created: ", cos(test_angle), sin(test_angle))
-	print("calculated: ", calculated.x, calculated.y)
+	print("created: ", test_target)
+	print("calculated: ", calc_target_pos(distances, positions, samex))
+	# print(_calc_samex_sensors(11), _calc_samex_sensors2(11), sep="\n")
+
+	for i in range(100):
+		if _calc_samex_sensors(i).sort() != _calc_samex_sensors2(i).sort(): print(i, end=", ")
 
 
 if __name__ == "__main__":
