@@ -47,7 +47,7 @@ bool point_is_on_line(const point_t* self, const line_t* line);
 
 point_t line_calc_pointfx(const line_t* self, ftype x);
 point_t line_calc_pointfy(const line_t* self, ftype y);
-point_t line_intersect_line(line_t* self, line_t* other);
+point_t line_intersect_line(const line_t* self, const line_t* other);
 ftype line_distanceto_circle(const line_t* line, const circle_t* circle);
 
 point_t* circle_intersect_circle(const circle_t* self, const circle_t* line);

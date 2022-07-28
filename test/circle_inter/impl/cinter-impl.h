@@ -32,8 +32,8 @@ point_t line_calc_pointfy(const line_t* self, ftype y) {
 	point_t rv = {(y - self->n) / self->m, y}; return rv;
 }
 
-point_t line_intersect_line(line_t* self, line_t* other) { 
-	return line_calc_pointfx(self, (other->n-self->n)/(self->m-self->m));
+point_t line_intersect_line(const line_t* self, const line_t* other) { 
+	return line_calc_pointfx(self, (ftype)(other->n-self->n)/(self->m-other->m));
 }
 
 ftype line_distanceto_circle(const line_t* line, const circle_t* circle) {
