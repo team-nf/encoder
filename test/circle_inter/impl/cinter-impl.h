@@ -2,17 +2,27 @@
 #define _CINTER_IMPL_INCLUDED
 
 /* bu tarz kısa fonksiyonları direkt macro yapmak daha mantıklı olabilir */
-ftype point_find_distance(const point_t* self, const point_t* other) {
+ftype point_distanceto_point(const point_t* self, const point_t* other) {
 	return sqrt(pow(self->x - other->x, 2) + pow(self->y - other->y, 2));
 }
 
+ftype point_distanceto_line(const point_t* self, const line_t* line) {
+	return abs(self->y - line->m*self->x - line->n) / sqrt(pow(line->m, 2)+1);
+}
+
+ftype point_distanceto_circle(const point_t* self, const circle_t* circle) {
+	return point_distanceto_point(self, &circle->center) - circle->radius;
+}
+
 bool point_is_on_circle(const point_t* self, const circle_t* circle) {
-	return check_wt(circle->radius, point_find_distance(&circle->center, self));
+	return check_wt(circle->radius, point_distanceto_point(&circle->center, self));
 }
 
 bool point_is_on_line(const point_t* self, const line_t* line) {
 	return check_wt(self->y, line->m * self->x + line->n);
 }
+
+
 
 point_t line_calc_pointfx(const line_t* self, ftype x) {
 	point_t rv = {x, self->m * x + self->n}; return rv;
@@ -21,6 +31,15 @@ point_t line_calc_pointfx(const line_t* self, ftype x) {
 point_t line_calc_pointfy(const line_t* self, ftype y) {
 	point_t rv = {(y - self->n) / self->m, y}; return rv;
 }
+
+point_t line_intersect_line(line_t* self, line_t* other) { 
+	return line_calc_pointfx(self, (other->n-self->n)/(self->m-self->m));
+}
+
+ftype line_distanceto_circle(const line_t* line, const circle_t* circle) {
+	return point_distanceto_line(&circle->center, line) - circle->radius;
+}
+
 
 point_t* circle_intersect_circle(const circle_t* self, const circle_t* circle) {
 /* iki çember max 2 noktada kesişebilir */
@@ -68,6 +87,12 @@ point_t* circle_intersect_line(const circle_t* self, const line_t* line) {
 	free(roots); return rv;
 }
 
+ftype circle_distanceto_circle(const circle_t* self, const circle_t* other) {
+	return point_distanceto_point(&self->center, &other->center) - self->radius - other->radius;
+}
+
+
+
 ftype* find_roots(ftype a, ftype b, ftype c) {
 	ftype delta = pow(b, 2) - 4*a*c;
 	if (delta < 0) return NULL;
@@ -78,5 +103,7 @@ ftype* find_roots(ftype a, ftype b, ftype c) {
 	else { rv[0] = (-b-sqrt(delta))/(2*a); rv[1] = (-b+sqrt(delta))/(2*a); }
 	return rv;
 }
+
+
 
 #endif

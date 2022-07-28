@@ -4,10 +4,12 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
-typedef float ftype;
+
+/* typedef float ftype; */
 /* typedef double ftype; */
-/* typedef long double ftype; */
+typedef long double ftype;
 
 typedef enum {false=0, true=1} bool;
 
@@ -37,17 +39,23 @@ typedef struct circle_t {
 } circle_t;
 
 
-ftype point_find_distance(const point_t* self, const point_t* other);
+ftype point_distanceto_point(const point_t* self, const point_t* other);
+ftype point_distanceto_line(const point_t* self, const line_t* line);
+ftype point_distanceto_circle(const point_t* self, const circle_t* circle);
 bool point_is_on_circle(const point_t* self, const circle_t* circle);
 bool point_is_on_line(const point_t* self, const line_t* line);
 
 point_t line_calc_pointfx(const line_t* self, ftype x);
 point_t line_calc_pointfy(const line_t* self, ftype y);
+point_t line_intersect_line(line_t* self, line_t* other);
+ftype line_distanceto_circle(const line_t* line, const circle_t* circle);
 
 point_t* circle_intersect_circle(const circle_t* self, const circle_t* line);
 point_t* circle_intersect_line(const circle_t* self, const line_t* line);
+ftype circle_distanceto_circle(const circle_t* self, const circle_t* other);
 
 ftype* find_roots(ftype a, ftype b, ftype c);
+
 
 #ifdef CINTER_IMPL
 #include "impl/cinter-impl.h"
