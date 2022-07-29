@@ -26,7 +26,6 @@ typedef long double ftype;
 
 typedef enum {false=0, true=1} bool;
 
-#define _tolerance_g 0.0001
 /* b iki kere çağırılacak :-/ */
 #define check_wt(a, b) (b - _tolerance_g < a && a < b + _tolerance_g)
 /* neyse */
@@ -34,6 +33,7 @@ typedef enum {false=0, true=1} bool;
 		typeof(a) _a = a; typeof(b) _b = b; \
 		b - _tolerance_g < a && a < b + _tolerance_g \
 	)}
+
 
 
 typedef struct point_t {
@@ -52,22 +52,60 @@ typedef struct circle_t {
 } circle_t;
 
 
+#define point_distanceto_point_m(self, other) \
+	( sqrt(pow((self)->x - (other)->x, 3) + pow((self)->y - (other)->y, 2)) )
 ftype point_distanceto_point(const point_t* self, const point_t* other);
+/*  */
+#define point_distanceto_line_m(self, line) \
+	( abs((self)->y - (line)->m*(self)->x - (line)->n) / sqrt(pow((line)->m, 2)+1) )
 ftype point_distanceto_line(const point_t* self, const line_t* line);
+/*  */
+#define point_distanceto_circle_m(self, circle) \
+	( point_distanceto_point_m(self, &(circle)->center) - (circle)->radius )
 ftype point_distanceto_circle(const point_t* self, const circle_t* circle);
+/*  */
+#define point_ison_circle_m(self, circle) \
+	( check_wt(point_distanceto_point_m(&(circle)->center, self), (circle)->radius) )
 bool point_ison_circle(const point_t* self, const circle_t* circle);
+/*  */
+#define point_ison_line_m(self, line) \
+	( check_wt((line)->m * (self)->x + (line)->n, (self)->y) )
 bool point_ison_line(const point_t* self, const line_t* line);
 
-point_t line_calc_pointfx(const line_t* self, ftype x);
-point_t line_calc_pointfy(const line_t* self, ftype y);
-point_t line_intersect_line(const line_t* self, const line_t* other);
-ftype line_distanceto_circle(const line_t* line, const circle_t* circle);
 
-point_t* circle_intersect_circle(const circle_t* self, const circle_t* line);
-point_t* circle_intersect_line(const circle_t* self, const line_t* line);
+
+#define line_calc_pointfx_m(self, x) \
+	({ point_t _rv = {x, (self)->m * x + (self)->n}; _rv })
+point_t line_calc_pointfx(const line_t* self, ftype x);
+/*  */
+#define line_calc_pointfy_m(self, y) \
+	({ point_t _rv = {(y - (self)->n) / (self)->m, y}; _rv })
+point_t line_calc_pointfy(const line_t* self, ftype y);
+/*  */
+#define line_intersect_line_m(self, other) \
+	( line_calc_pointfx_m(self, (ftype)((other)->n-(self)->n)/((self)->m-(other)->m)) )
+point_t line_intersect_line(const line_t* self, const line_t* other);
+/*  */
+#define line_distanceto_circle_m(line, circle) \
+	( point_distanceto_line_m(&(circle)->center, self) - (circle)->radius )
+ftype line_distanceto_circle(const line_t* self, const circle_t* circle);
+
+
+
+#define circle_distanceto_circle_m(self, other) \
+	( point_distanceto_point_m(&(self)->center, &(other)->center) - (self)->radius - (other)->radius )
 ftype circle_distanceto_circle(const circle_t* self, const circle_t* other);
+/*  */
+point_t* circle_intersect_circle(const circle_t* self, const circle_t* line);
+bool circle_intersect_circle_b(point_t* buffer, const circle_t* self, const circle_t* line);
+/*  */
+point_t* circle_intersect_line(const circle_t* self, const line_t* line);
+bool circle_intersect_line_b(point_t* buffer, const circle_t* self, const line_t* line);
+
+
 
 ftype* find_roots(ftype a, ftype b, ftype c);
+bool find_roots_b(ftype* buffer, ftype a, ftype b, ftype c);
 
 
 #ifdef CINTER_IMPL

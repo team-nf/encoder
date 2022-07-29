@@ -67,7 +67,7 @@ point_t find_target(const ftype* distances, const point_t* positions, int sensor
 #endif
 
 	
-	printf("unperfect\n");
+	printf("unperfect calculation\n");
 	/* === Eğer elimizdeki değerler mükemmel bir nokta oluşturmuyorsa === */
 	/*				(ki yüksek ihtimalle oluşturmayacak)				  */
 	
@@ -142,8 +142,10 @@ int main() {
 	}
 	
 	point_t found_target = find_target(distances, positions, _sensor_num_g, &magnet_projection);
-	printf("test  target: ("_fmt", "_fmt")\n", test_point.x, test_point.y); 
-	printf("found target: ("_fmt", "_fmt")\n", found_target.x, found_target.y);
+	printf("test  target: ("_fmt", "_fmt"), angle: %f\n", 
+			test_point.x, test_point.y, to_degree(atan(test_point.y/test_point.x)));
+	printf("found target: ("_fmt", "_fmt"), angle: %f\n", 
+			found_target.x, found_target.y, to_degree(atan(found_target.y/found_target.x)));
 /* 	if (!check_wt(test_point.x, found_target.x)) {  */
 /* 		printf("x error at angle: %d; test: "_fmt", found: "_fmt"\n",  */
 /* 				angle, test_point.x, found_target.x);  */
