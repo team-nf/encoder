@@ -28,7 +28,7 @@ typedef enum {false=0, true=1} bool;
 
 #define _tolerance_g 0.0001
 /* b iki kere çağırılacak :-/ */
-#define check_wt(a, b) b - _tolerance_g < a && a < b + _tolerance_g
+#define check_wt(a, b) (b - _tolerance_g < a && a < b + _tolerance_g)
 /* neyse */
 #define check_wts(a, b) {(\
 		typeof(a) _a = a; typeof(b) _b = b; \

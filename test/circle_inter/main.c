@@ -107,21 +107,37 @@ point_t find_target(const ftype* distances, const point_t* positions, int sensor
 	return sum;
 }
 
+#define to_radian(degree) ((double)degree / 180 * M_PI)
+#define to_degree(radian) ((double)radian / M_PI * 180)
+
 int main() {
 	/* For once */
+	printf("Started.\n");
 	point_t *positions = calc_sensor_positions(_sensor_num_g);
-	if (positions == NULL) { printf("calc_sensor_positions error\n"); return 1; }
+	if (positions == NULL) { assert("calc_sensor_positions error\n"); }
 
+	double magnet_radius = 0.5;
 	/* For each loop */
-	point_t test_point = {1, 1};
-	ftype *distances = calc_test_distances(test_point, positions, _sensor_num_g);
-	if (distances == NULL) { free(positions); printf("calc_test_distances error\n"); return 1; }
-	
-	point_t found_target = find_target(distances, positions, _sensor_num_g);
-	printf("test  target: ("_fmt", "_fmt")\n", test_point.x, test_point.y); 
-	printf("found target: ("_fmt", "_fmt")\n", found_target.x, found_target.y);
+	for (int angle=0; angle < 360; angle++) {
+		/* int angle = 30; */
+		/* point_t test_point = {1, 1}; */
+		point_t test_point = { magnet_radius * cos(to_radian(angle)), magnet_radius * sin(to_radian(angle)) };
+		ftype *distances = calc_test_distances(test_point, positions, _sensor_num_g);
+		if (distances == NULL) { assert("calc_test_distances error\n"); }
+		
+		point_t found_target = find_target(distances, positions, _sensor_num_g);
+/* 		printf("test  target: ("_fmt", "_fmt")\n", test_point.x, test_point.y);  */
+/* 		printf("found target: ("_fmt", "_fmt")\n", found_target.x, found_target.y); */
+		if (!check_wt(test_point.x, found_target.x)) { 
+			printf("x error at angle: %d; test: "_fmt", found: "_fmt"\n", 
+					angle, test_point.x, found_target.x); 
+		} if (!check_wt(test_point.y, found_target.y)) { 
+			printf("y error at angle: %d; test: "_fmt", found: "_fmt"\n", 
+					angle, test_point.y, found_target.y); 
+		}
 
-	free(positions);
-	free(distances);
+		free(distances);
+	} free(positions);
+	printf("Done.\n");
 	return 0;
 }
