@@ -14,11 +14,11 @@ ftype point_distanceto_circle(const point_t* self, const circle_t* circle) {
 	return point_distanceto_point(self, &circle->center) - circle->radius;
 }
 
-bool point_is_on_circle(const point_t* self, const circle_t* circle) {
+bool point_ison_circle(const point_t* self, const circle_t* circle) {
 	return check_wt(circle->radius, point_distanceto_point(&circle->center, self));
 }
 
-bool point_is_on_line(const point_t* self, const line_t* line) {
+bool point_ison_line(const point_t* self, const line_t* line) {
 	return check_wt(self->y, line->m * self->x + line->n);
 }
 
@@ -44,14 +44,14 @@ ftype line_distanceto_circle(const line_t* line, const circle_t* circle) {
 point_t* circle_intersect_circle(const circle_t* self, const circle_t* circle) {
 /* iki çember max 2 noktada kesişebilir */
 	if (check_wt(self->radius, 0)) {
-		if (point_is_on_circle(&self->center, circle)) {
+		if (point_ison_circle(&self->center, circle)) {
 			point_t *rv = (point_t *)malloc(2 * sizeof(point_t));
 			memcpy(&rv[0], &self->center, sizeof(point_t));
 			memcpy(&rv[1], &self->center, sizeof(point_t));
 			return rv;
 		} return NULL;
 	} if (check_wt(circle->radius, 0)) {
-		if (point_is_on_circle(&circle->center, self)) {
+		if (point_ison_circle(&circle->center, self)) {
 			point_t *rv = (point_t *)malloc(2 * sizeof(point_t));
 			memcpy(&rv[0], &self->center, sizeof(point_t));
 			memcpy(&rv[1], &self->center, sizeof(point_t));
@@ -70,7 +70,7 @@ point_t* circle_intersect_circle(const circle_t* self, const circle_t* circle) {
 
 point_t* circle_intersect_line(const circle_t* self, const line_t* line) {
 	if (check_wt(self->radius, 0)) {
-		if (point_is_on_line(&self->center, line)) {
+		if (point_ison_line(&self->center, line)) {
 			point_t *rv = (point_t *)malloc(2 * sizeof(point_t));
 			memcpy(&rv, &self->center, sizeof(point_t));
 			return rv;

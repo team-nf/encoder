@@ -87,20 +87,19 @@ def main():
 	# For once
 	positions = calc_sensor_positions(_sensor_num_g)
 
-	for angle in range(360):
-		# For each loop 
-		test_angle = radians(angle)
-		test_target = point_t(cos(test_angle), sin(test_angle))
-		# test_target = point_t(3, 9)
-		distances = calc_distance_to_sensors_test(positions, test_target)
+	# For each loop 
+	#test_angle = radians(angle)
+	#test_target = point_t(cos(test_angle), sin(test_angle))
+	test_target = point_t(1, 1)
+	distances = calc_distance_to_sensors_test(positions, test_target)
 
-		target = calc_target(distances, positions)
-		errors = []
-		try:
-			if   not check_wt(target.x, test_target.x): errors.append(angle)
-			elif not check_wt(target.y, test_target.y): errors.append(angle)
-		except:
-			errors.append(angle)
+	target = calc_target(distances, positions)
+	errors = []
+	try:
+		if   not check_wt(target.x, test_target.x): errors.append(angle)
+		elif not check_wt(target.y, test_target.y): errors.append(angle)
+	except:
+		errors.append(angle)
 
 	print(f"Done with {len(errors)} errors.")
 	if len(errors) > 0: print(errors)
