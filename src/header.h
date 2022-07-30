@@ -1,22 +1,58 @@
 #ifndef _HEADER_H_INCLUDED
 #define _HEADER_H_INCLUDED
 
+#include "config.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+
+
 /* typedef enum bool { false=0, true=1 }; */
 
-enum encoder_mode_g {
-	em_analog,
-	em_digital,
-	em_analog_digital,
-	em_count
-};
+#ifdef _type_float
+typedef float ftype;
+#define _fmt "%f"
+#endif
+
+#ifdef _type_double
+typedef double ftype;
+#define _fmt "%f"
+#endif
+
+#ifdef _type_long_double
+typedef long double ftype;
+#define _fmt "%Lf"
+#endif
+
 
 
 typedef struct sensor_data_t {
 	int _min, _normal, _max;
 } sensor_data_t;
 
-#define _version_g "0000000"
-#include "config.h"
+typedef struct point_t {
+	ftype x, y;
+} point_t;
+
+typedef struct line_t {
+	ftype m, n;
+} line_t;
+
+typedef struct circle_t {
+	point_t center;
+	ftype radius;
+} circle_t;
+
+
+
+#define blink(time, repetition) ({ \
+	for (int i=0; i < repetition+2; i++) { \
+		digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN)); \
+		delay(time); \
+	} \
+})
+
 
 /* release için derleme hızı artsın diye */
 #ifdef _DEBUG
@@ -43,6 +79,7 @@ typedef struct sensor_data_t {
 #endif
 
 
+
 #ifndef _DEBUG
 #define serialdn(...)
 #define seriald(...)
@@ -51,14 +88,6 @@ typedef struct sensor_data_t {
 #define serialf(...)
 #define dbg(a)
 #endif
-
-#define blink(time, repetition) ({ \
-	for (int i=0; i < repetition+2; i++) { \
-		digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN)); \
-		delay(time); \
-	} \
-})
-
 #endif
 
 

@@ -40,6 +40,9 @@ bool calibration_check_sensor_data(const sensor_data_t* sensor_datas, int sensor
 
 bool calibration_check_equals(const calibration_data_t* data1, const calibration_data_t* data2) {
 	if (calibration_check_exists(&data1->header, &data2->header) == false)		{ return false; }
+	if (data1->magnet_projection.center.x != data2->magnet_projection.center.x) { return false; }
+	if (data1->magnet_projection.center.y != data2->magnet_projection.center.y) { return false; }
+	if (data1->magnet_projection.radius != data2->magnet_projection.radius)		{ return false; }
 	for (int i=0; i < data1->header.sensor_num; i++) {
 		if (data1->sensor_datas[i]._min != data2->sensor_datas[i]._min)			{ return false; }
 		if (data1->sensor_datas[i]._max != data2->sensor_datas[i]._max)			{ return false; }
@@ -54,9 +57,11 @@ bool calibration_check_eeprom(int eeprom_address, const calibration_meta_t* exam
 }
 
 bool calibration_check(const calibration_data_t* data, const calibration_meta_t* example_meta) {
-	if (!calibration_check_exists(&data->header, example_meta))											{ return false; }
-	if (!calibration_check_sensor_data((sensor_data_t *)&data->sensor_datas, example_meta->sensor_num))	{ return false; }
-	return true;
+	if (!calibration_check_exists(&data->header, example_meta)) {
+		return false; 
+	} if (!calibration_check_sensor_data((sensor_data_t *)&data->sensor_datas, example_meta->sensor_num)) {
+		return false;
+	} return true;
 }
 
 
@@ -72,7 +77,7 @@ void calibration_print(const calibration_data_t* data) {
 #endif
 
 
-bool calibrate_sensors(calibration_data_t* _data, int first_sensor, enum encoder_mode_g mode) {
+bool calibrate_sensors(calibration_data_t* _data, int first_sensor) {
 	serialdn("Starting calibration.");
 	/* Eğer debug modundaysak gönderilen datayı kontrol et */
 	dbg(if (!calibration_check_exists(&_data->header, &_example_meta_g)) { return false; })

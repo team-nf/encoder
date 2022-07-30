@@ -16,6 +16,7 @@ typedef struct calibration_meta_t {
 
 typedef struct calibration_data_t {
 	calibration_meta_t header;
+	circle_t magnet_projection;
 	sensor_data_t sensor_datas[_sensor_num_g];
 } calibration_data_t;
 
@@ -44,13 +45,13 @@ bool calibration_check_equals(const calibration_data_t* data1, const calibration
 dbg(void calibration_print(const calibration_data_t* data));
 
 
-#define _calibrate_sensors(_data) _calibrate_sensors(_data, _first_sensor_pin_g, _mode_g)
-bool calibrate_sensors(calibration_data_t* _data, int first_sensor, enum encoder_mode_g mode);
+#define _calibrate_sensors(_data) _calibrate_sensors(_data, _first_sensor_pin_g)
+bool calibrate_sensors(calibration_data_t* _data, int first_sensor);
 
 
 
 #ifdef CALIB_IMPL
-#include "impl/calibration_impl.h"
+#include "impl/calibration-impl.h"
 #endif
 
 #endif
