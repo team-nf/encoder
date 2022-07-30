@@ -8,6 +8,14 @@
 
 #include "config.h"
 
+#define _max_intersections_g _sensor_num_g * (_sensor_num_g-1) / 2
+/* #define _ft_buffer_size_g \ */
+	/* intersections \ */
+/* 	(_max_intersections_g * sizeof(point_t)) + \ */
+	/* circles \ */
+/* 	(_sensor_num_g * sizeof(circle_t)) + \ */
+	/* inter_rv \ */
+/* 	(2 * sizeof(point_t))  */
 
 #ifdef _type_float
 typedef float ftype;

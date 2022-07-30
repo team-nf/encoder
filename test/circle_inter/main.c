@@ -28,15 +28,16 @@ ftype* calc_test_distances(point_t test_point, const point_t *sensor_positions, 
 	} return distances;
 }
 
-struct ft_buffers {
-	circle_t *circles;
-	point_t *intersections, *_inter_rv;
+struct ft_buffer {
+	point_t _inter_rv[2];
+	point_t intersections[_max_intersections_g];
+	circle_t circles[_sensor_num_g];
 };
 
-point_t find_target(struct ft_buffers _buffers, int sensor_num, circle_t* magnet_projection) {
-#define circles (_buffers.circles)
-#define intersections (_buffers.intersections)
-#define inter_rv (_buffers._inter_rv)
+point_t find_target(struct ft_buffer *buffer, int sensor_num, circle_t* magnet_projection) {
+#define circles (buffer->circles)
+#define intersections (buffer->intersections)
+#define inter_rv (buffer->_inter_rv)
 
 #ifndef _skip_perfect_check
 	/* bu noktayı iptal etme şansım var, testlere göre değerlendireceğim */
@@ -123,12 +124,7 @@ int main() {
 	circle_t _projection = {magnet_center, magnet_radius};
 	circle_t *magnet_projection = &_projection;
 
-	struct ft_buffers _buffers;
-	ftype max_intersections = _sensor_num_g * (_sensor_num_g-1) / 2;
-	_buffers.intersections = (point_t *)malloc(max_intersections * sizeof(point_t));
-	_buffers.circles = (circle_t *)malloc(_sensor_num_g * sizeof(circle_t));
-	_buffers._inter_rv = (point_t *)malloc(2 * sizeof(point_t));
-
+	struct ft_buffer *ft_buffer = (struct ft_buffer *)malloc(sizeof(struct ft_buffer));
 	/* For each loop */
 	{
 		int angle = 30;
@@ -144,8 +140,8 @@ int main() {
 		
 		/* initialize circles */
 		for (int i = 0; i < _sensor_num_g; i++) {
-			_buffers.circles[i].center = positions[i];
-			_buffers.circles[i].radius = distances[i];
+			ft_buffer->circles[i].center = positions[i];
+			ft_buffer->circles[i].radius = distances[i];
 		}
 
 		if (magnet_projection == NULL) {
@@ -156,7 +152,7 @@ int main() {
 			magnet_projection = &_projection;
 		}
 
-		point_t found_target = find_target(_buffers, _sensor_num_g, magnet_projection);
+		point_t found_target = find_target(ft_buffer, _sensor_num_g, magnet_projection);
 
 
 		printf("test  target: ("_fmt", "_fmt"), angle: %f\n", 
