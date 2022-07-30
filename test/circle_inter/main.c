@@ -28,27 +28,22 @@ ftype* calc_test_distances(point_t test_point, const point_t *sensor_positions, 
 	} return distances;
 }
 
-point_t find_target(const ftype* distances, const point_t* positions, int sensor_num, circle_t* magnet_projection) {
-	if (magnet_projection == NULL) {
-		/* eğer mıknatısın yolu hakkında herhangi bir bilgimiz  */
-		/* yoksa en içte olan kesişim noktalarını almak için */
-		point_t _center = {0, 0};
-		circle_t _projection = {_center, 0};
-		magnet_projection = &_projection;
-	}
+struct ft_buffers {
+	circle_t *circles;
+	point_t *intersections, *_inter_rv;
+};
 
-	/* her seferinde bunlar için yeniden malloc çağırmak doğru değil buna bi çözüm buluruz */
-	circle_t *circles = (circle_t *)malloc(sensor_num * sizeof(circle_t));
-	for (int i = 0; i < sensor_num; i++) {
-		circles[i].center = positions[i];
-		circles[i].radius = distances[i];
-	}
-
+point_t find_target(struct ft_buffers _buffers, int sensor_num, circle_t* magnet_projection) {
+#define circles (_buffers.circles)
+#define intersections (_buffers.intersections)
+#define inter_rv (_buffers._inter_rv)
 
 #ifndef _skip_perfect_check
 	/* bu noktayı iptal etme şansım var, testlere göre değerlendireceğim */
-	int i; point_t *inter_rv = circle_intersect_circle(&circles[0], &circles[1]);
-	if (inter_rv == NULL) { assert("null error 51"); }
+	int i; 
+	if (circle_intersect_circle_b(inter_rv, &circles[0], &circles[1])) { 
+		assert("cicb error\n"); 
+	}
 	/*	eğer yukarıdaki satırdan gelen kesişim noktalarından  */
 	/* herhangi biri tüm çemberler üzerinde varsa fazla uğraşmadan döndür */
 	for (i = 2; i < sensor_num; i++) {
@@ -63,18 +58,14 @@ point_t find_target(const ftype* distances, const point_t* positions, int sensor
 			if (!point_ison_circle(&inter_rv[1], &circles[i])) break;	
 		} if (i == sensor_num) return inter_rv[1];
 	}
-	/* ENDREGION */
 #endif
 
-	
-	printf("unperfect calculation\n");
+	printf("Unperfect calculation\n");
 	/* === Eğer elimizdeki değerler mükemmel bir nokta oluşturmuyorsa === */
 	/*				(ki yüksek ihtimalle oluşturmayacak)				  */
 	
 	/* normalde maksimum kesişme sayısı aşağıdakinin 2 katı ama her kesişmenin *
 	 * noktaya yakın olan kısmını alacağız o yüzden 2 ile çarpmamız gerekmiyor */
-	ftype max_intersections = sensor_num * (sensor_num-1) / 2;
-	point_t *intersections = (point_t *)malloc(max_intersections * sizeof(point_t));
 	int intersections_len = 0;
 	
 #ifndef _skip_perfect_check
@@ -82,26 +73,24 @@ point_t find_target(const ftype* distances, const point_t* positions, int sensor
 			point_distanceto_circle(&inter_rv[1], magnet_projection)) {
 		intersections[0] = inter_rv[1];
 	} else { intersections[0] = inter_rv[0]; }
-	free(inter_rv);
 	for (i = 1; i < sensor_num; i++) {
 #endif
 
 #ifdef _skip_perfect_check
-	point_t *inter_rv;
 	for (i = 0; i < sensor_num-1; i++) {
 #endif
 		/* sırayla tüm çemberli birbirleriyle kesiştir */
 		for (int j = i+1; j < sensor_num; j++){
 			/* çemberlerin kesişme noktalarını al */
-			inter_rv = circle_intersect_circle(&circles[i], &circles[j]);
-			if (inter_rv == NULL) { assert("null error 97"); }
+			if (circle_intersect_circle_b(inter_rv, &circles[i], &circles[j])) {
+				assert("cicb error\n"); 
+			}
 
 			/* bizim mıknatısın yoluna daha yakın olanı kaydet */
 			if (point_distanceto_circle(&inter_rv[0], magnet_projection) > 
 					point_distanceto_circle(&inter_rv[1], magnet_projection))
 				intersections[intersections_len++] = inter_rv[1];
 			else intersections[intersections_len++] = inter_rv[0];
-			free(inter_rv);
 		}
 	}
 
@@ -114,6 +103,10 @@ point_t find_target(const ftype* distances, const point_t* positions, int sensor
 	sum.x /= intersections_len; 
 	sum.y /= intersections_len; 
 	return sum;
+
+#undef circles
+#undef intersections
+#undef inter_rv
 }
 
 #define to_radian(degree) ((double)degree / 180 * M_PI)
@@ -127,35 +120,60 @@ int main() {
 
 	point_t magnet_center = {0, 0};
 	double magnet_radius = 0.5;
-	circle_t magnet_projection = {magnet_center, magnet_radius};
+	circle_t _projection = {magnet_center, magnet_radius};
+	circle_t *magnet_projection = &_projection;
+
+	struct ft_buffers _buffers;
+	ftype max_intersections = _sensor_num_g * (_sensor_num_g-1) / 2;
+	_buffers.intersections = (point_t *)malloc(max_intersections * sizeof(point_t));
+	_buffers.circles = (circle_t *)malloc(_sensor_num_g * sizeof(circle_t));
+	_buffers._inter_rv = (point_t *)malloc(2 * sizeof(point_t));
 
 	/* For each loop */
-	int angle = 30;
-	/* point_t test_point = {1, 1}; */
-	point_t test_point = { magnet_radius * cos(to_radian(angle)), magnet_radius * sin(to_radian(angle)) };
-	ftype *distances = calc_test_distances(test_point, positions, _sensor_num_g);
-	if (distances == NULL) { assert("calc_test_distances error\n"); }
+	{
+		int angle = 30;
+		/* point_t test_point = {1, 1}; */
+		point_t test_point = { magnet_radius * cos(to_radian(angle)), magnet_radius * sin(to_radian(angle)) };
+		ftype *distances = calc_test_distances(test_point, positions, _sensor_num_g);
+		if (distances == NULL) { assert("calc_test_distances error\n"); }
 
-	/* create noise */
-	for (int i=0; i < _sensor_num_g; i++) {
-		distances[i] = distances[i] + 0.0001;
-	}
-	
-	point_t found_target = find_target(distances, positions, _sensor_num_g, &magnet_projection);
-	printf("test  target: ("_fmt", "_fmt"), angle: %f\n", 
-			test_point.x, test_point.y, to_degree(atan(test_point.y/test_point.x)));
-	printf("found target: ("_fmt", "_fmt"), angle: %f\n", 
-			found_target.x, found_target.y, to_degree(atan(found_target.y/found_target.x)));
-/* 	if (!check_wt(test_point.x, found_target.x)) {  */
-/* 		printf("x error at angle: %d; test: "_fmt", found: "_fmt"\n",  */
-/* 				angle, test_point.x, found_target.x);  */
-/* 	} else if (!check_wt(test_point.y, found_target.y)) {  */
-/* 		printf("y error at angle: %d; test: "_fmt", found: "_fmt"\n",  */
-/* 				angle, test_point.y, found_target.y);  */
-/* 	} else { printf("%d degrees ok.\n", angle); } */
+		/* create noise */
+		for (int i=0; i < _sensor_num_g; i++) {
+			distances[i] = distances[i] + 0.0001;
+		}
+		
+		/* initialize circles */
+		for (int i = 0; i < _sensor_num_g; i++) {
+			_buffers.circles[i].center = positions[i];
+			_buffers.circles[i].radius = distances[i];
+		}
 
-	free(distances);
-	free(positions);
+		if (magnet_projection == NULL) {
+			/* eğer mıknatısın yolu hakkında herhangi bir bilgimiz  */
+			/* yoksa en içte olan kesişim noktalarını almak için */
+			point_t _center = {0, 0};
+			circle_t _projection = {_center, 0};
+			magnet_projection = &_projection;
+		}
+
+		point_t found_target = find_target(_buffers, _sensor_num_g, magnet_projection);
+
+
+		printf("test  target: ("_fmt", "_fmt"), angle: %f\n", 
+				test_point.x, test_point.y, to_degree(atan(test_point.y/test_point.x)));
+		printf("found target: ("_fmt", "_fmt"), angle: %f\n", 
+				found_target.x, found_target.y, to_degree(atan(found_target.y/found_target.x)));
+	/* 	if (!check_wt(test_point.x, found_target.x)) {  */
+	/* 		printf("x error at angle: %d; test: "_fmt", found: "_fmt"\n",  */
+	/* 				angle, test_point.x, found_target.x);  */
+	/* 	} else if (!check_wt(test_point.y, found_target.y)) {  */
+	/* 		printf("y error at angle: %d; test: "_fmt", found: "_fmt"\n",  */
+	/* 				angle, test_point.y, found_target.y);  */
+	/* 	} else { printf("%d degrees ok.\n", angle); } */
+
+
+		free(distances);
+	}free(positions);
 	printf("Done.\n");
 	return 0;
 }
