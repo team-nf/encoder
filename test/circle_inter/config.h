@@ -3,7 +3,7 @@
 
 
 
-/* #define _skip_perfect_check */
+#define _skip_perfect_check
 
 /* #define _type_float */
 #define _type_double

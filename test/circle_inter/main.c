@@ -61,7 +61,7 @@ point_t find_target(struct ft_buffer *buffer, int sensor_num, circle_t* magnet_p
 	}
 #endif
 
-	printf("Unperfect calculation\n");
+	printf("Unperfect calculation.\n");
 	/* === Eğer elimizdeki değerler mükemmel bir nokta oluşturmuyorsa === */
 	/*				(ki yüksek ihtimalle oluşturmayacak)				  */
 	
@@ -78,7 +78,8 @@ point_t find_target(struct ft_buffer *buffer, int sensor_num, circle_t* magnet_p
 #endif
 
 #ifdef _skip_perfect_check
-	for (i = 0; i < sensor_num-1; i++) {
+	printf("Skipped perfect check.\n");
+	for (int i = 0; i < sensor_num-1; i++) {
 #endif
 		/* sırayla tüm çemberli birbirleriyle kesiştir */
 		for (int j = i+1; j < sensor_num; j++){
@@ -96,15 +97,7 @@ point_t find_target(struct ft_buffer *buffer, int sensor_num, circle_t* magnet_p
 	}
 
 	/* toplanan kesişim noktalarının ortalamasını al */
-	point_t sum = {0, 0};
-	for (i = 0; i < intersections_len; i++) {
-		sum.x += intersections[i].x;
-		sum.y += intersections[i].y;
-	}
-	sum.x /= intersections_len; 
-	sum.y /= intersections_len; 
-	return sum;
-
+	return points_find_center(intersections, intersections_len);
 #undef circles
 #undef intersections
 #undef inter_rv
@@ -123,8 +116,8 @@ int main() {
 	double magnet_radius = 0.5;
 	circle_t _projection = {magnet_center, magnet_radius};
 	circle_t *magnet_projection = &_projection;
-
 	struct ft_buffer *ft_buffer = (struct ft_buffer *)malloc(sizeof(struct ft_buffer));
+
 	/* For each loop */
 	{
 		int angle = 30;

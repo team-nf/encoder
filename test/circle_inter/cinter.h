@@ -79,6 +79,14 @@ bool point_ison_circle(const point_t* self, const circle_t* circle);
 #define point_ison_line_m(self, line) \
 	( check_wt((line)->m * (self)->x + (line)->n, (self)->y) )
 bool point_ison_line(const point_t* self, const line_t* line);
+/*  */
+#define points_find_center_m(points, point_num) ({  \
+	point_t sum = {0, 0};							\
+	for (int i = 0; i < point_num; i++) {			\
+		sum.x += points[i].x; sum.y += points[i].y;	\
+	} sum.x /= point_num; sum.y /= point_num;		\
+	sum; })
+point_t points_find_center(const point_t* points, int point_num);
 
 
 
