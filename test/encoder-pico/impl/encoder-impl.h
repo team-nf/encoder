@@ -53,7 +53,7 @@ point_t find_target(struct ft_buffer *buffer, int sensor_num, circle_t* magnet_p
 	/* bu noktayı iptal etme şansım var, testlere göre değerlendireceğim */
 	int i; 
 	if (!circle_intersect_circle_b(inter_rv, &circles[0], &circles[1])) { 
-		serialdn("cicb error encoder-56"); 
+		/* serialdn("cicb error encoder-56");  */
 	}
 	/*	eğer yukarıdaki satırdan gelen kesişim noktalarından  */
 	/* herhangi biri tüm çemberler üzerinde varsa fazla uğraşmadan döndür */
@@ -88,14 +88,13 @@ point_t find_target(struct ft_buffer *buffer, int sensor_num, circle_t* magnet_p
 #endif
 
 #ifdef _skip_perfect_check
-	printf("Skipped perfect check.\n");
 	for (int i = 0; i < sensor_num-1; i++) {
 #endif
 		/* sırayla tüm çemberli birbirleriyle kesiştir */
 		for (int j = i+1; j < sensor_num; j++){
 			/* çemberlerin kesişme noktalarını al */
 			if (!circle_intersect_circle_b(inter_rv, &circles[i], &circles[j])) {
-				serialdn("cicb error encoder-98"); 
+				/* serialdn("cicb error encoder-98");  */
 			}
 
 			/* bizim mıknatısın yoluna daha yakın olanı kaydet */

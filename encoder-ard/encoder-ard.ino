@@ -3,14 +3,14 @@
 /* calibration.h dosyası zaten headerı includelıyor */
 /* #include "header.h" */
 #define CALIB_IMPL
-#include "calibration.h"
+#include "../src/calibration.h"
 
 /* cinter.h, encoder.h dosyasında includelanıyor */
 #define CINTER_IMPL
 /* #include "cinter.h" */
 
 #define ENCODER_IMPL
-#include "encoder.h"
+#include "../src/encoder.h"
 
 /* 3 pinden 1 saniyede 2976 okuma (arduino uno)*/
 calibration_data_t *_calibration_data_g;
@@ -26,20 +26,22 @@ void setup() {
 	pinMode(_calibration_pin_g, INPUT);
 
 	/* calibration.h setup */
-	bool valid_calib = 0;
-	_calibration_data_g = calibration_read(_eeprom_address_g);
-	if (calibration_check(_calibration_data_g, &_example_meta_g)) valid_calib = 1;
+/* 	bool valid_calib = 0; */
+/* 	_calibration_data_g = calibration_read(_eeprom_address_g); */
+/* 	if (calibration_check(_calibration_data_g, &_example_meta_g)) valid_calib = 1; */
+/*  */
+/* 	if (!valid_calib || digitalRead(_calibration_pin_g) == HIGH) { */
+/* 		while (!valid_calib) { */
+/* 			valid_calib = calibrate_sensors(_calibration_data_g, _first_sensor_pin_g); */
+/* 			dbg(if (valid_calib == 0) Serial.println("Calibration failed")); */
+/* 		} */
+/* 		calibration_write(_eeprom_address_g, _calibration_data_g); */
+/* 	} */
+/* 	dbg(else Serial.println("Found valid calibration data in eeprom.")); */
 
-	if (!valid_calib || digitalRead(_calibration_pin_g) == HIGH) {
-		while (!valid_calib) {
-			valid_calib = calibrate_sensors(_calibration_data_g, _first_sensor_pin_g);
-			dbg(if (valid_calib == 0) Serial.println("Calibration failed"));
-		}
-		calibration_write(_eeprom_address_g, _calibration_data_g);
-	}
-	dbg(else Serial.println("Found valid calibration data in eeprom."));
-
-
+	_calibration_data_g = (calibration_data_t *)malloc(sizeof(calibration_data_t));
+	_calibration_data_g->magnet_projection.center = {0, 0};
+	_calibration_data_g->magnet_projection.radius = 0.1;
 
 	/* encoder.h setup */
 	_positions_g = calc_sensor_positions(_sensor_num_g);
@@ -61,17 +63,17 @@ void loop() {
 	 *
 	 */
 
-	int angle = 30;
-	/* point_t test_point = {1, 1}; */
-	point_t test_point = { 
-		_calibration_data_g->magnet_projection.radius * cos(to_radian(angle)),
-		_calibration_data_g->magnet_projection.radius * sin(to_radian(angle)) 
-	};
+	point_t test_point = {1, 1};
+	/* int angle = 30; */
+/* 	point_t test_point = {  */
+/* 		_calibration_data_g->magnet_projection.radius * cos(to_radian(angle)), */
+/* 		_calibration_data_g->magnet_projection.radius * sin(to_radian(angle))  */
+/* 	}; */
 	calc_test_distances_b(_distances_g, test_point, _positions_g, _sensor_num_g);
 
 	/* create noise */
-	for (int i=0; i < _sensor_num_g; i++)
-		_distances_g[i] = _distances_g[i] + 0.0001;
+/* 	for (int i=0; i < _sensor_num_g; i++) */
+/* 		_distances_g[i] = _distances_g[i] + 0.0001; */
 
 	
 	/* initialize circles */
@@ -80,13 +82,14 @@ void loop() {
 		_ft_buffer_g->circles[i].radius = _distances_g[i];
 	}
 
+	find_target(_ft_buffer_g, _sensor_num_g, &_calibration_data_g->magnet_projection);
+	Serial.println((int)_ft_buffer_g->ft_return_value.x);
+	Serial.println((int)_ft_buffer_g->ft_return_value.y);
 
-	point_t found_target = find_target(_ft_buffer_g, _sensor_num_g, &_calibration_data_g->magnet_projection);
 
-
-/* 	serialdn("test  target: (%d, %d), angle: %f",  */
+/* 	serialfn("test  target: (%d, %d), angle: %f",  */
 /* 			test_point.x, test_point.y, to_degree(atan(test_point.y/test_point.x))); */
-/* 	serialdn("found target: (%d, %d), angle: %f",  */
+/* 	serialfn("found target: (%d, %d), angle: %f",  */
 /* 			found_target.x, found_target.y, to_degree(atan(found_target.y/found_target.x))); */
 
 /* 	if (!check_wt(test_point.x, found_target.x)) {  */
@@ -96,9 +99,6 @@ void loop() {
 /* 		printf("y error at angle: %d; test: "_fmt", found: "_fmt"\n",  */
 /* 				angle, test_point.y, found_target.y);  */
 /* 	} else { printf("%d degrees ok.\n", angle); } */
-
-
-	free(_distances_g);
 
 	serialdn("Loop ended.");
 	delay(9000);

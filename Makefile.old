@@ -1,0 +1,13 @@
+ino_file = src/src.ino
+
+app:
+	arduino-cli compile $(ino_file) -b arduino:avr:uno
+# --build-property "build.extra_flags=\"-fpermissive\""
+
+upload:
+	sudo /home/tunapro/.programs/arduino-cli/arduino-cli compile --upload $(ino_file) -b arduino:avr:uno -p /dev/ttyUSB0
+# 	sudo /home/tunapro/.programs/arduino-cli/arduino-cli upload $(ino_file) -b arduino:avr:uno -p /dev/ttyUSB0 && echo "done."
+
+monitor:
+	sudo /home/tunapro/.programs/arduino-cli/arduino-cli monitor -p /dev/ttyUSB0 -c baudrate=115200
+

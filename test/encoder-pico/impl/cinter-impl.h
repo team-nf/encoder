@@ -66,13 +66,13 @@ bool circle_intersect_circle_b(point_t* buffer, const circle_t* self, const circ
 			memcpy(&buffer[0], &self->center, sizeof(point_t));
 			memcpy(&buffer[1], &self->center, sizeof(point_t));
 			return true;
-		} serialdn("radius 0"); return false;
+		} return false;
 	} if (check_wt(circle->radius, 0)) {
 		if (point_ison_circle_m(&circle->center, self)) {
 			memcpy(&buffer[0], &self->center, sizeof(point_t));
 			memcpy(&buffer[1], &self->center, sizeof(point_t));
 			return true;
-		} serialdn("radius 0"); return false;
+		} return false;
 	}
 
 	/* karmaşık matematiksel işlem, burada anlatmaya çalışmayacağım.
@@ -97,14 +97,14 @@ bool circle_intersect_line_b(point_t* buffer, const circle_t* self, const line_t
 			memcpy(&buffer[0], &self->center, sizeof(point_t));
 			memcpy(&buffer[1], &self->center, sizeof(point_t));
 			return true;
-		} serialdn("radius 0 error cilb"); return false;
+		} return false;
 	} 
 	ftype roots[2];
 	bool rv = find_roots_b( roots,
 							pow(line->m, 2) + 1,
 							2*(line->m*(line->n-self->center.y)-self->center.x),
 							pow(line->n-self->center.y, 2)+pow(self->center.x, 2)-pow(self->radius, 2));
-	if (!rv) { serialdn("roots error 105"); return false; }
+	if (!rv) { return false; }
 
 	/* tek kök olduğunda tekrar hesaplamama gerek yoktu evet ama 
 	 * fonksiyonun yaptığı işlem pahalı bir işlem değil */

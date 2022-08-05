@@ -1,24 +1,74 @@
-ino_file = src/src.ino
+PROJECT_NAME=encoder 
+MCU=PICO
+# MCU=ARDUINO
 
-app:
-	arduino-cli compile $(ino_file) -b arduino:avr:uno
-# --build-property "build.extra_flags=\"-fpermissive\""
+PICO_BUILDDIR=build/pico
+PICO_CMAKE_GEN_PATH=generate_cmake.py
+PICO_MOUNTPATH=/mnt/pico
+PICO_MAKEOPTS=-j9
 
-upload:
-	sudo /home/tunapro/.programs/arduino-cli/arduino-cli compile --upload $(ino_file) -b arduino:avr:uno -p /dev/ttyUSB0
-# 	sudo /home/tunapro/.programs/arduino-cli/arduino-cli upload $(ino_file) -b arduino:avr:uno -p /dev/ttyUSB0 && echo "done."
+ARD_PORT=/dev/ttyUSB0
+ARD_BOARD=arduino:avr:uno
+ARD_CLI=~/.programs/arduino-cli/arduino-cli
+# Makefile ile aynı klasörde olmalı
+ARD_INOFOLDER=encoder-ard
+ARD_INOFILE=$(ARD_INOFOLDER)/$(ARD_INOFOLDER).ino
+ARD_BUILDDIR=build/arduino
 
-monitor:
-	sudo /home/tunapro/.programs/arduino-cli/arduino-cli monitor -p /dev/ttyUSB0 -c baudrate=115200
+ARD_FLAGS=
+ARD_FLAGS+=-b $(ARD_BOARD)
+ARD_FLAGS+=--output-dir $(ARD_BUILDDIR)
+ARD_FLAGS+=$(ARD_INOFILE)
 
-builder: 
-	arduino-builder \
-		-compile \
-		-hardware /usr/share/arduino/hardware \
-		-tools /usr/share/arduino/hardware/tools \
-		-libraries lib \
-		-fqbn arduino:avr:uno \
-		-build-path build \
-		$(ino_file)
 
-# -tools /usr/share/arduino/hardware/tools-builder \
+
+HEADERS=src/header.h
+HEADERS+=src/config.h
+
+HEADERS+=src/encoder.h
+HEADERS+=src/impl/encoder-impl.h
+
+HEADERS+=src/calibration.h
+HEADERS+=src/impl/calibration-impl.h
+
+HEADERS+=src/cinter.h
+HEADERS+=src/impl/cinter-impl.h
+
+
+
+ifeq ($(MCU),PICO)
+	OUTPUT_FILE=$(PICO_BUILDDIR)/$(PROJECT_NAME).uf2 
+	UPLOAD_NEEDED=$(PICO_MOUNTPATH)/INDEX.HTM
+	UPLOAD_COMMAND=sudo cp $(PICO_BUILDDIR)/$(PROJECT_NAME).uf2 $(PICO_MOUNTPATH)
+endif
+ifeq ($(MCU),ARDUINO)
+	OUTPUT_FILE=$(ARD_BUILDDIR)/$(ARD_INOFOLDER).ino.hex 
+	UPLOAD_NEEDED=$(ARD_PORT)
+	UPLOAD_COMMAND=sudo $(ARD_CLI) compile --upload -p $(ARD_PORT) $(ARD_FLAGS)
+endif
+
+
+app: $(OUTPUT_FILE)
+
+upload: $(OUTPUT_FILE) $(UPLOAD_NEEDED)
+	$(UPLOAD_COMMAND)
+
+pico: $(PICO_BUILDDIR)/$(PROJECT_NAME).uf2 
+arduino: $(ARD_BUILDDIR)/$(ARD_INOFOLDER).ino.hex 
+
+# PICO BUILD COMMANDS
+$(PICO_BUILDDIR)/$(PROJECT_NAME).uf2: $(PICO_BUILDDIR) main.c $(HEADERS)
+	cd $(PICO_BUILDDIR) && make $(PICO_MAKEOPTS) && cd -
+
+$(PICO_BUILDDIR): CMakeLists.txt
+	rmdir build ; mkdir build ; cd $(PICO_BUILDDIR) && cmake .. && cd -
+
+CMakeLists.txt:
+	python3 $(PICO_CMAKE_GEN_PATH)
+
+
+# ARDUINO COMPILE COMMANDS
+$(ARD_BUILDDIR)/$(ARD_INOFOLDER).ino.hex: $(ARD_INOFILE) $(HEADERS)
+	$(ARD_CLI) compile $(ARD_FLAGS)
+
+
