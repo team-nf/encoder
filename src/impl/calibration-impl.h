@@ -2,7 +2,6 @@
 #define _CALIB_IMPL_H_INCLUDED
 
 #ifdef CALIB_IMPL
-#include <EEPROM.h>
 
 
 byte* eeprom_read(int start_address, int size) {

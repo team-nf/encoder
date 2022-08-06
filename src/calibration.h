@@ -3,6 +3,14 @@
 
 #include "header.h"
 
+#ifdef _ARDUINO
+#include <EEPROM.h>
+#endif
+
+#ifdef _PICO
+#warning PICO CALIBRATION NOT IMPLEMENTED
+#endif
+
 #define _eeprom_address_g 0
 #define _calibration_start_g "calibeg"
 #define _version_skip_key_g "9999999"

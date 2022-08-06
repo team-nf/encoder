@@ -47,8 +47,7 @@ void calc_test_distances_b(ftype* buffer, point_t test_point, const point_t *sen
 
 
 struct ft_buffer {
-	point_t ft_return_value, _inter_rv[2];
-	point_t intersections[_max_intersections_g];
+	point_t _inter_rv[2], intersections[_max_intersections_g];
 	circle_t circles[_sensor_num_g];
 }; 
 

@@ -8,7 +8,7 @@
 
 
 
-/* typedef enum bool { false=0, true=1 }; */
+/* typedef enum { false=0, true=1 } bool; */
 
 #ifdef _type_float
 typedef float ftype;
@@ -48,14 +48,17 @@ typedef struct circle_t {
 
 #define blink(time, repetition) ({ \
 	for (int i=0; i < repetition+2; i++) { \
-		digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN)); \
-		delay(time); \
+		write_pin(LED_BUILTIN, !read_pin(LED_BUILTIN)); \
+		wait(time); \
 	} \
 })
 
 
 /* release için derleme hızı artsın diye */
 #ifdef _DEBUG
+#define dbg(a) a
+
+#ifdef _ARDUINO
 #define serialf(...) ({ \
 	int _size = snprintf(NULL, 0, __VA_ARGS__) + 1; \
 	char* _str = (char *)malloc(_size * sizeof(char)); \
@@ -63,7 +66,6 @@ typedef struct circle_t {
 	Serial.print(_str); \
 	free(_str); \
 })
-
 #define serialfn(...) ({ \
 	int _size = snprintf(NULL, 0, __VA_ARGS__) + 1; \
 	char* _str = (char *)malloc(_size * sizeof(char)); \
@@ -71,28 +73,29 @@ typedef struct circle_t {
 	Serial.println(_str); \
 	free(_str); \
 })
+#define seriald(msg)  Serial.print(msg)
+#define serialdn(msg) Serial.println(msg)
+#endif
 
-#define serialdn(...) Serial.print(__VA_ARGS__)
-#define seriald(...)  Serial.print(__VA_ARGS__)
+#ifdef _PICO
+#define serialf(...) printf(__VA_ARGS__)
+#define serialfn(...) printf(__VA_ARGS__); printf("\n")
+#define seriald(msg)  printf(msg)
+#define serialdn(msg) printf(msg); printf("\n")
+#endif
 
-#define dbg(a) a
 #endif
 
 
 
 #ifndef _DEBUG
-#define serialdn(...)
-#define seriald(...)
-
-#define serialfn(...)
 #define serialf(...)
+#define serialfn(...)
+
+#define seriald(msg)
+#define serialdn(msg)
+
 #define dbg(a)
 #endif
 #endif
 
-
-/* config file include */
-/* #ifndef _CONFIG_H_INCLUDED */
-/* #define _CONFIG_H_INCLUDED */
-/* #include "config.h" */
-/* #endif */

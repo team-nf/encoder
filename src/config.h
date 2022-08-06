@@ -10,6 +10,31 @@ const int _first_sensor_pin_g	= A0;
 
 
 
+/* == MCU Specific == */
+/* millis ve analogRead için pico versiyonları bulunmalı */
+#ifdef _ARDUINO
+#define start_serial_connection() Serial.begin(115200)
+#define wait(ms) delay(ms)
+#define set_pin(pin, mode) pinMode(pin, mode)
+#define read_pin(pin) digitalRead(pin)
+#define write_pin(pin, state) digitalWrite(pin, state)
+#endif
+
+
+#ifdef _PICO
+#define start_serial_connection() 
+#define wait(ms) sleep_ms(ms)
+#define set_pin(pin, mode) gpio_out(pin, mode)
+#define read_pin(pin) gpio_get(pin)
+#define write_pin(pin, state) gpio_put(pin, state)
+/* BURAYA BAK */
+#define OUTPUT GPIO_OUT
+#define INPUT GPIO_IN
+#define LED_BUILTIN PICO_DEFAULT_LED_PIN
+#endif
+
+
+
 /* == Calibration == */
 #define _calibration_length_g 12
 #define _calibration_pin_g 2

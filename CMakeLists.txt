@@ -13,7 +13,7 @@ pico_sdk_init()
 
 # point out the CMake, where to find the executable source file
 add_executable(${PROJECT_NAME}
-        main.c
+        src/pico.c
 )
 
 # create map/bin/hex/uf2 files.

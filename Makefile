@@ -5,13 +5,14 @@ MCU=PICO
 PICO_BUILDDIR=build/pico
 PICO_CMAKE_GEN_PATH=generate_cmake.py
 PICO_MOUNTPATH=/mnt/pico
-PICO_MAKEOPTS=-j9
+PICO_MAKEOPTS=-j6
+PICO_MAINFILE=src/pico.c
 
 ARD_PORT=/dev/ttyUSB0
 ARD_BOARD=arduino:avr:uno
 ARD_CLI=~/.programs/arduino-cli/arduino-cli
 # Makefile ile aynı klasörde olmalı
-ARD_INOFOLDER=encoder-ard
+ARD_INOFOLDER=src
 ARD_INOFILE=$(ARD_INOFOLDER)/$(ARD_INOFOLDER).ino
 ARD_BUILDDIR=build/arduino
 
@@ -53,15 +54,18 @@ app: $(OUTPUT_FILE)
 upload: $(OUTPUT_FILE) $(UPLOAD_NEEDED)
 	$(UPLOAD_COMMAND)
 
+clean:
+	rm -rf build/pico/* build/arduino/*
+
 pico: $(PICO_BUILDDIR)/$(PROJECT_NAME).uf2 
 arduino: $(ARD_BUILDDIR)/$(ARD_INOFOLDER).ino.hex 
 
 # PICO BUILD COMMANDS
-$(PICO_BUILDDIR)/$(PROJECT_NAME).uf2: $(PICO_BUILDDIR) main.c $(HEADERS)
+$(PICO_BUILDDIR)/$(PROJECT_NAME).uf2: $(PICO_BUILDDIR)/CMakeCache.txt $(PICO_MAINFILE) $(HEADERS)
 	cd $(PICO_BUILDDIR) && make $(PICO_MAKEOPTS) && cd -
 
-$(PICO_BUILDDIR): CMakeLists.txt
-	rmdir build ; mkdir build ; cd $(PICO_BUILDDIR) && cmake .. && cd -
+$(PICO_BUILDDIR)/CMakeCache.txt: CMakeLists.txt
+	rmdir $(PICO_BUILDDIR) ; mkdir $(PICO_BUILDDIR); cd $(PICO_BUILDDIR) && cmake ../.. && cd -
 
 CMakeLists.txt:
 	python3 $(PICO_CMAKE_GEN_PATH)
