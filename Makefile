@@ -1,4 +1,4 @@
-PROJECT_NAME=encoder 
+PROJECT_NAME=encoder
 MCU=PICO
 # MCU=ARDUINO
 
@@ -8,8 +8,11 @@ PICO_MOUNTPATH=/mnt/pico
 PICO_MAKEOPTS=-j6
 PICO_MAINFILE=src/pico.c
 
+
 ARD_PORT=/dev/ttyUSB0
-ARD_BOARD=arduino:avr:uno
+# ARD_BOARD=arduino:avr:uno
+# ARD_BOARD=arduino:mbed_rp2040:pico
+ARD_BOARD=arduino:mbed:pico
 ARD_CLI=~/.programs/arduino-cli/arduino-cli
 # Makefile ile aynı klasörde olmalı
 ARD_INOFOLDER=src

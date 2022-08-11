@@ -4,11 +4,20 @@
 
 
 /* == General == */
+#ifdef _ARDUINO
 const int _first_sensor_pin_g	= A0;
+#endif
+
 #define _sensor_num_g 3
 #define _DEBUG
+#define _ONEFILE
 
 
+#ifdef _ONEFILE
+#define CALC_IMPL
+#define ANALYTICS_IMPL
+#define CALIB_IMPL
+#endif
 
 /* == MCU Specific == */
 /* millis ve analogRead için pico versiyonları bulunmalı */
@@ -24,7 +33,7 @@ const int _first_sensor_pin_g	= A0;
 #ifdef _PICO
 #define start_serial_connection() 
 #define wait(ms) sleep_ms(ms)
-#define set_pin(pin, mode) gpio_out(pin, mode)
+#define set_pin(pin, mode) gpio_init(pin); gpio_set_dir(pin, mode)
 #define read_pin(pin) gpio_get(pin)
 #define write_pin(pin, state) gpio_put(pin, state)
 /* BURAYA BAK */
