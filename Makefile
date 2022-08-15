@@ -71,7 +71,7 @@ clean:
 	rm -rf --preserve-root $(PICO_BUILDDIR)/* $(ARD_BUILDDIR)/* $(PC_BUILDDIR)/*
 
 valgrind: pc
-	valgrind -v ./$(PC_BUILDDIR)/$(PC_MAINFILE).o
+	valgrind -v ./$(PC_BUILDDIR)/$(PC_MAINFILE).o --trace-children=yes
 
 
 pico: $(PICO_BUILDDIR)/$(PROJECT_NAME).uf2 

@@ -12,6 +12,16 @@
 
 
 /* ========================================== */
+
+/* Keyboard interruptı yakalamak için */
+#include <signal.h>
+volatile sig_atomic_t _flag_g = 0;
+void interrupt_flag_changer(int sig){
+	_flag_g = 1;
+}
+
+/* ========================================== */
+
 #include "header.h"
 
 #define _eeprom_address_g 0
@@ -30,7 +40,11 @@ typedef struct calibration_data_t {
 	sensor_data_t sensor_datas[_sensor_num_g];
 } calibration_data_t;
 
-const calibration_meta_t _example_meta_g = { _calibration_start_g, _version_g, _sensor_num_g };
+const calibration_meta_t _example_meta_g = {_calibration_start_g, 
+											_version_g, 
+											_sensor_num_g 
+											};
+
 /* ========================================== */
 
 #include "main.h"
@@ -38,7 +52,7 @@ const calibration_meta_t _example_meta_g = { _calibration_start_g, _version_g, _
 
 int main() {
 	serialdn("Started.");
-
+	signal(SIGINT, interrupt_flag_changer); 
 	struct encoder_init_parameters parameters = {.sensor_num = _sensor_num_g,
 												 .calibration_pin = _calibration_pin_g,
 												 .eeprom_address = _eeprom_address_g,
@@ -57,7 +71,14 @@ int main() {
 			serialdn("Encoder loop failed.");
 		} else { 
 			serialdn("Encoder loop succeeded.");
-		} wait(6000);
+		} 
+
+		/* Keyboard intterupt gelirse */
+		if (_flag_g) {
+			encoder_free(&init_rv); 
+			break;
+		}
+		wait(6000);
 	}
 	return 0;
 }

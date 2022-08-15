@@ -19,6 +19,13 @@ struct encoder_init_parameters {
 	calibration_meta_t example_meta;
 };
 
+void encoder_free(struct encoder_init_rv* rv) {
+	free(rv->calibration_data);
+	free(rv->ft_buffer);
+	free(rv->positions);
+	free(rv->distances);
+}
+
 bool encoder_init(struct encoder_init_rv* rv_buffer, struct encoder_init_parameters* parameters) {
 #define pr parameters
 #define rv rv_buffer
