@@ -28,7 +28,7 @@ bool encoder_init(struct encoder_init_rv* rv_buffer, struct encoder_init_paramet
 	set_pin(pr->calibration_pin, INPUT);
 
 	/* calibration.h setup */
-#ifndef _PICO
+#ifdef _ARDUINO
  	bool valid_calib = 1;
  	rv->calibration_data = calibration_read(pr->eeprom_address);
  	if (calibration_check(rv->calibration_data, &pr->example_meta)) 
@@ -67,7 +67,6 @@ bool encoder_loop(struct encoder_init_rv* init_rv, struct encoder_init_parameter
 #define pr parameters
 #define rv init_rv
 	/* point_t test_point = {1, 1}; */
-	int angle = 30;
 	for (int angle = 0; angle < 360; angle++) {
 		point_t test_point = { 
 			rv->calibration_data->magnet_projection.radius * cos(to_radian(angle)),

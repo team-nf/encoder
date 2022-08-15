@@ -1,15 +1,13 @@
 #ifndef _CALIB_H_INCLUDED
 #define _CALIB_H_INCLUDED
 
+#ifndef _ARDUINO
+#warning CALIBRATION NOT IMPLEMENTED FOR PLATFORM
+
+#else
 #include "header.h"
-
-#ifdef _ARDUINO
 #include <EEPROM.h>
-#endif
 
-#ifdef _PICO
-#warning PICO CALIBRATION NOT IMPLEMENTED
-#endif
 
 #define _eeprom_address_g 0
 #define _calibration_start_g "calibeg"
@@ -185,5 +183,6 @@ bool calibrate_sensors(calibration_data_t* _data, int first_sensor) {
 	return true;
 }
 
+#endif
 #endif
 #endif

@@ -8,8 +8,6 @@
 
 
 
-/* typedef enum { false=0, true=1 } bool; */
-
 #ifdef _type_float
 typedef float ftype;
 #define _fmt "%f"
@@ -79,9 +77,16 @@ typedef struct circle_t {
 
 #ifdef _PICO
 #define serialf(...) printf(__VA_ARGS__)
-#define serialfn(...) printf(__VA_ARGS__); printf("\n")
+#define serialfn(...) ({ printf(__VA_ARGS__); printf("\n"); })
 #define seriald(msg)  printf(msg)
-#define serialdn(msg) printf(msg); printf("\n")
+#define serialdn(msg) ({ printf(msg); printf("\n"); })
+#endif
+
+#ifdef _PC
+#define serialf(...) printf(__VA_ARGS__)
+#define serialfn(...) ({ printf(__VA_ARGS__); printf("\n"); })
+#define seriald(msg)  printf(msg)
+#define serialdn(msg) ({ printf(msg); printf("\n"); })
 #endif
 
 #endif
