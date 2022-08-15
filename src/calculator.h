@@ -128,7 +128,7 @@ point_t find_target(struct ft_buffer *buffer, int sensor_num, circle_t* magnet_p
 	}
 #endif
 
-	/* printf("Unperfect calculation.\n"); */
+	/* serialdn("Unperfect calculation.\n"); */
 	/* === Eğer elimizdeki değerler mükemmel bir nokta oluşturmuyorsa === */
 	/*				(ki yüksek ihtimalle oluşturmayacak)				  */
 	
@@ -145,7 +145,6 @@ point_t find_target(struct ft_buffer *buffer, int sensor_num, circle_t* magnet_p
 #endif
 
 #ifdef _skip_perfect_check
-	printf("Skipped perfect check.\n");
 	for (int i = 0; i < sensor_num-1; i++) {
 #endif
 		/* sırayla tüm çemberli birbirleriyle kesiştir */

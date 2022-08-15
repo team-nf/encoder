@@ -7,8 +7,10 @@
 
 
 void setup() {
+#ifdef _DEBUG
 	Serial.begin(115200);
 	Serial.println("Started.");
+#endif
 }
 
 
@@ -21,11 +23,17 @@ void loop() {
 												};
 	struct encoder_init_rv init_rv;
 
-	while(!encoder_init(&init_rv, &parameters)) { Serial.println("Encoder init failed."); delay(1000); }
+	while(!encoder_init(&init_rv, &parameters)) {
+		serialdn("Encoder init failed.");
+		wait(3000);
+	} serialdn("Encoder init succeeded.");
+
 	while(true) {
 		if(!encoder_loop(&init_rv, &parameters)) {
-			Serial.println("Encoder loop failed.");
-		}
+			serialdn("Encoder loop failed.");
+		} else { 
+			serialdn("Encoder loop succeeded.");
+		} wait(6000);
 	}
 }
 

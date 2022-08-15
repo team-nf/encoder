@@ -33,8 +33,8 @@ const calibration_meta_t _example_meta_g = { _calibration_start_g, _version_g, _
 
 
 int main() {
-	stdio_init_all();
-	printf("Started.");
+	dbg(stdio_init_all());
+	serialdn("Started.");
 
 	struct encoder_init_parameters parameters = {.sensor_num = _sensor_num_g,
 												 .calibration_pin = _calibration_pin_g,
@@ -44,11 +44,17 @@ int main() {
 												};
 	struct encoder_init_rv init_rv;
 
-	while(!encoder_init(&init_rv, &parameters)) { serialdn("Encoder init failed."); wait(1000); }
+	while(!encoder_init(&init_rv, &parameters)) {
+		serialdn("Encoder init failed.");
+		wait(3000);
+	} serialdn("Encoder init succeeded.");
+
 	while(true) {
 		if(!encoder_loop(&init_rv, &parameters)) {
 			serialdn("Encoder loop failed.");
-		}
+		} else { 
+			serialdn("Encoder loop succeeded.");
+		} wait(6000);
 	}
 	return 0;
 }

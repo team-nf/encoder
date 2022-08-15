@@ -66,12 +66,9 @@ bool encoder_init(struct encoder_init_rv* rv_buffer, struct encoder_init_paramet
 bool encoder_loop(struct encoder_init_rv* init_rv, struct encoder_init_parameters* parameters) {
 #define pr parameters
 #define rv init_rv
-
-	serialdn("Loop started.");
-
 	/* point_t test_point = {1, 1}; */
 	int angle = 30;
-	for (int angle = 0; angle < 360; angle=angle+30) {
+	for (int angle = 0; angle < 360; angle++) {
 		point_t test_point = { 
 			rv->calibration_data->magnet_projection.radius * cos(to_radian(angle)),
 			rv->calibration_data->magnet_projection.radius * sin(to_radian(angle)) 
@@ -90,13 +87,11 @@ bool encoder_loop(struct encoder_init_rv* init_rv, struct encoder_init_parameter
 
 		point_t found_target = find_target(rv->ft_buffer, pr->sensor_num, \
 				&rv->calibration_data->magnet_projection);
-		serialf("Test target:  (%f, %f)\n", test_point.x, test_point.y);
-		serialf("Found target: (%f, %f)\n", found_target.x, found_target.y);
+/* 		serialf("Test target:  (%f, %f)\n", test_point.x, test_point.y); */
+/* 		serialf("Found target: (%f, %f)\n", found_target.x, found_target.y); */
 
 		if (!check_wt(test_point.x, found_target.x)) { return false; }
 		if (!check_wt(test_point.y, found_target.y)) { return false; }
-
-		serialdn("Loop ended.");
 	} return true;
 
 #undef pr
