@@ -68,7 +68,7 @@ upload: $(OUTPUT_FILE) $(UPLOAD_NEEDED)
 	$(UPLOAD_COMMAND)
 
 clean:
-	rm -rf $(PICO_BUILDDIR)/* $(ARD_BUILDDIR)/* $(PC_BUILDDIR)/*
+	rm -rf --preserve-root $(PICO_BUILDDIR)/* $(ARD_BUILDDIR)/* $(PC_BUILDDIR)/*
 
 valgrind: pc
 	valgrind -v ./$(PC_BUILDDIR)/$(PC_MAINFILE).o
