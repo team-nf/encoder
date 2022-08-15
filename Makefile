@@ -5,7 +5,7 @@ MCU=PC
 
 
 PC_BUILDDIR=build/pc
-PC_MAKEOPTS=-Os -Wall -lm
+PC_MAKEOPTS=-Os -Wall -lm -ggdb
 PC_MAINFILE=pctest.c
 
 
