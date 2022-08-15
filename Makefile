@@ -68,7 +68,7 @@ upload: $(OUTPUT_FILE) $(UPLOAD_NEEDED)
 	$(UPLOAD_COMMAND)
 
 clean:
-	rm -rf $(PICO_BUILDDIR)/* $(ARDUINO_BUILDDIR)/* $(PC_BUILDDIR)/*
+	rm -rf $(PICO_BUILDDIR)/* $(ARD_BUILDDIR)/* $(PC_BUILDDIR)/*
 
 pico: $(PICO_BUILDDIR)/$(PROJECT_NAME).uf2 
 arduino: $(ARD_BUILDDIR)/$(ARD_INOFOLDER).ino.hex 
