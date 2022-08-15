@@ -1,5 +1,5 @@
-#ifndef _CINTER_INCLUDED
-#define _CINTER_INCLUDED
+#ifndef _ANALYTICS_INCLUDED
+#define _ANALYTICS_INCLUDED
 
 /* #include "config.h" */
 #include "header.h"
@@ -81,7 +81,7 @@ ftype* find_roots(ftype a, ftype b, ftype c);
 bool find_roots_b(ftype* buffer, ftype a, ftype b, ftype c);
 
 
-#ifdef CINTER_IMPL
+#ifdef ANALYTICS_IMPL
 /* bu tarz kısa fonksiyonları direkt macro yapmak daha mantıklı olabilir */
 ftype point_distanceto_point(const point_t* self, const point_t* other) {
 	return sqrt(pow(self->x - other->x, 2) + pow(self->y - other->y, 2));

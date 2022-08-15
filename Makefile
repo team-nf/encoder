@@ -9,10 +9,12 @@ PICO_MAKEOPTS=-j6
 PICO_MAINFILE=src/pico.c
 
 
-ARD_PORT=/dev/ttyUSB0
-# ARD_BOARD=arduino:avr:uno
+
+ARD_BOARD=arduino:avr:uno
 # ARD_BOARD=arduino:mbed_rp2040:pico
-ARD_BOARD=arduino:mbed:pico
+# ARD_BOARD=arduino:mbed:pico
+
+ARD_PORT=/dev/ttyUSB0
 ARD_CLI=~/.programs/arduino-cli/arduino-cli
 # Makefile ile aynı klasörde olmalı
 ARD_INOFOLDER=src
@@ -29,14 +31,9 @@ ARD_FLAGS+=$(ARD_INOFILE)
 HEADERS=src/header.h
 HEADERS+=src/config.h
 
-HEADERS+=src/encoder.h
-HEADERS+=src/impl/encoder-impl.h
-
+HEADERS+=src/analytics.h
 HEADERS+=src/calibration.h
-HEADERS+=src/impl/calibration-impl.h
-
-HEADERS+=src/cinter.h
-HEADERS+=src/impl/cinter-impl.h
+HEADERS+=src/calculator.h
 
 
 

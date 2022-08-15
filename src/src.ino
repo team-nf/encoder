@@ -1,27 +1,31 @@
 #define _ARDUINO
-#include <EEPROM.h>
 
-/* calibration.h dosyası headerı includelıyor */
-#define CALIB_IMPL
 #include "calibration.h"
-
-/* cinter.h, encoder.h dosyasında includelanıyor */
-#define CINTER_IMPL
-/* #include "cinter.h" */
-
-#define ENCODER_IMPL
-#include "encoder.h"
-
+#include "calculator.h"
 
 #include "main.h"
 
 
 void setup() {
-	while(!encoder_init());
+	Serial.begin(115200);
+	Serial.println("Started.");
 }
 
 
 void loop() {
-	encoder_loop();
+	struct encoder_init_parameters parameters = {_sensor_num_g,
+												 _calibration_pin_g,
+												 _eeprom_address_g,
+												 _first_sensor_pin_g,
+												 _example_meta_g
+												};
+	struct encoder_init_rv init_rv;
+
+	while(!encoder_init(&init_rv, &parameters)) { Serial.println("Encoder init failed."); delay(1000); }
+	while(true) {
+		if(!encoder_loop(&init_rv, &parameters)) {
+			Serial.println("Encoder loop failed.");
+		}
+	}
 }
 

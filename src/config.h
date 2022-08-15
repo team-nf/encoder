@@ -5,7 +5,9 @@
 
 /* == General == */
 #ifdef _ARDUINO
-const int _first_sensor_pin_g	= A0;
+const int _first_sensor_pin_g = A0;
+#else
+const int _first_sensor_pin_g = 0;
 #endif
 
 #define _sensor_num_g 3
