@@ -10,3 +10,11 @@ windowsta çalışır mı bilmiyorum denemedim. Make kurmaya üşeniyorum
 kodu yüklemeden config.h dosyasıyla oynanmalı
 
 öyle bi şeyler siz düzenlersiniz buraları ben kod yazmaya gidiyom
+
+## TODO
+Memory leak check with valgrind
+Multiprocessing (pico)
+Eeprom (pico and pc)
+Calibration improvement
+Roborio communication
+Voltage regulation circuits for pico
