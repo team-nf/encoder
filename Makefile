@@ -5,9 +5,9 @@ MCU=PC
 
 
 PC_BUILDDIR=build/pc
-PC_MAKEOPTS=-Os -Wall -lm -ggdb
+PC_MAKEOPTS=-Os -Wall -lm -g
 PC_MAINFILE=pctest.c
-
+VALGRIND_OUTPUT=$(PC_BUILDDIR)/valgrind.out
 
 
 PICO_BUILDDIR=build/pico
@@ -68,7 +68,11 @@ upload: $(OUTPUT_FILE) $(UPLOAD_NEEDED)
 	$(UPLOAD_COMMAND)
 
 clean:
-	rm -rf $(PICO_BUILDDIR)/* $(ARDUINO_BUILDDIR)/* $(PC_BUILDDIR)/*
+	rm -rf $(PICO_BUILDDIR)/* $(ARD_BUILDDIR)/* $(PC_BUILDDIR)/*
+
+valgrind: pc
+	valgrind -v ./$(PC_BUILDDIR)/$(PC_MAINFILE).o
+
 
 pico: $(PICO_BUILDDIR)/$(PROJECT_NAME).uf2 
 arduino: $(ARD_BUILDDIR)/$(ARD_INOFOLDER).ino.hex 
