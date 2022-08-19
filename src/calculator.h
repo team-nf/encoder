@@ -32,6 +32,8 @@ point_t* calc_sensor_positions(int sensor_num);
 	} }) 
 void calc_sensor_positions_b(point_t* buffer, int sensor_num);
 
+void calc_sensor_positions_bs(void* buffer, int step, int sensor_num);
+
 
 #define calc_test_distances_m(test_point, sensor_positions, sensor_num) ({ \
 	ftype *distances = (ftype *)malloc(sensor_num * sizeof(ftype)); \
@@ -43,15 +45,20 @@ ftype* calc_test_distances(point_t test_point, const point_t *sensor_positions, 
 	for (int i = 0; i < sensor_num; i++) { \
 		buffer[i] = point_distanceto_point_m(&test_point, &sensor_positions[i]); \
 	} })
-void calc_test_distances_b(ftype* buffer, point_t test_point, const point_t *sensor_positions, int sensor_num);
+void calc_test_distances_b
+	(ftype* buffer, point_t test_point, const point_t *sensor_positions, int sensor_num);
+
+void calc_test_distances_bs
+	(void* buffer, int buffer_step, point_t test_point, 
+	 const void *sensor_positions, int positions_step, int sensor_num);
 
 
 struct ft_buffer {
-	point_t _inter_rv[2], intersections[_max_intersections_g];
-	circle_t circles[_sensor_num_g];
+	point_t _inter_rv[2];
+	point_t intersections[_max_intersections_g];
 }; 
 
-point_t find_target(struct ft_buffer *buffer, int sensor_num, circle_t* magnet_projection);
+point_t find_target(struct ft_buffer *buffer, circle_t *circles, int sensor_num, circle_t* magnet_projection);
 
 
 #define to_radian(degree) ((double)degree / 180 * M_PI)
@@ -86,6 +93,13 @@ void calc_sensor_positions_b(point_t* buffer, int sensor_num) {
 	}
 }
 
+void calc_sensor_positions_bs(void* buffer, int step, int sensor_num) {
+	for (int i = 0; i < sensor_num; i++) {
+		((point_t *)(buffer+i*step))->x = (ftype)cos((double)(i * 2 * M_PI / sensor_num));
+		((point_t *)(buffer+i*step))->y = (ftype)sin((double)(i * 2 * M_PI / sensor_num));
+	}
+}
+
 
 ftype* calc_test_distances(point_t test_point, const point_t *sensor_positions, int sensor_num) {
 	ftype *distances = (ftype *)malloc(sensor_num * sizeof(ftype));
@@ -93,16 +107,26 @@ ftype* calc_test_distances(point_t test_point, const point_t *sensor_positions, 
 	return distances;
 }
 
-void calc_test_distances_b(ftype* buffer, point_t test_point, const point_t *sensor_positions, int sensor_num) {
+void calc_test_distances_b
+	(ftype* buffer, point_t test_point, const point_t *sensor_positions, int sensor_num)
+{
 	for (int i = 0; i < sensor_num; i++) {
-		buffer[i] = point_distanceto_point(&test_point, &sensor_positions[i]);
+		*(buffer+i) = point_distanceto_point(&test_point, &sensor_positions[i]);
+	}
+}
+
+void calc_test_distances_bs
+	(void* buffer, int buffer_step, point_t test_point, 
+	 const void *sensor_positions, int positions_step, int sensor_num)
+{
+	for (int i = 0; i < sensor_num; i++) {
+		*(ftype *)(buffer+i*buffer_step) = 
+			point_distanceto_point(&test_point, (point_t *)(sensor_positions+i*positions_step));
 	}
 }
 
 
-
-point_t find_target(struct ft_buffer *buffer, int sensor_num, circle_t* magnet_projection) {
-#define circles (buffer->circles)
+point_t find_target(struct ft_buffer *buffer, circle_t *circles, int sensor_num, circle_t* magnet_projection) {
 #define intersections (buffer->intersections)
 #define inter_rv (buffer->_inter_rv)
 
@@ -164,7 +188,6 @@ point_t find_target(struct ft_buffer *buffer, int sensor_num, circle_t* magnet_p
 
 	/* toplanan kesişim noktalarının ortalamasını al */
 	return points_find_center(intersections, intersections_len);
-#undef circles
 #undef intersections
 #undef inter_rv
 }

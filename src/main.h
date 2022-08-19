@@ -9,9 +9,7 @@
 struct encoder_init_rv {
 	calibration_data_t *calibration_data;
 	struct ft_buffer *ft_buffer;
-
-	point_t *positions;
-	ftype *distances;
+	circle_t *circles;
 };
 
 struct encoder_init_parameters {
@@ -22,8 +20,7 @@ struct encoder_init_parameters {
 void encoder_free(struct encoder_init_rv* rv) {
 	free(rv->calibration_data);
 	free(rv->ft_buffer);
-	free(rv->positions);
-	free(rv->distances);
+	free(rv->circles);
 }
 
 bool encoder_init(struct encoder_init_rv* rv_buffer, struct encoder_init_parameters* parameters) {
@@ -55,14 +52,13 @@ bool encoder_init(struct encoder_init_rv* rv_buffer, struct encoder_init_paramet
 #endif
 
 	/* encoder.h setup */
-	rv->positions = calc_sensor_positions(pr->sensor_num);
-	if (rv->positions == NULL) { serialdn("calc_sensor_positions error"); return false; }
-
 	rv->ft_buffer = (struct ft_buffer *)malloc(sizeof(struct ft_buffer));
 	if (rv->ft_buffer == NULL) { serialdn("ft_buffer malloc error"); return false; }
 	
-	rv->distances = (ftype *)malloc(pr->sensor_num * sizeof(ftype));
-	if (rv->distances == NULL) { serialdn("distances malloc error"); return false; }
+	rv->circles = (circle_t *)malloc(pr->sensor_num * sizeof(circle_t));
+	if (rv->circles == NULL) { serialdn("circles malloc error"); return false; }
+
+	calc_sensor_positions_bs(&rv->circles[0].center, sizeof(circle_t), pr->sensor_num);
 	return true;
 
 #undef pr
@@ -78,20 +74,18 @@ bool encoder_loop(struct encoder_init_rv* init_rv, struct encoder_init_parameter
 		point_t test_point = { 
 			rv->calibration_data->magnet_projection.radius * cos(to_radian(angle)),
 			rv->calibration_data->magnet_projection.radius * sin(to_radian(angle)) 
-		}; calc_test_distances_b(rv->distances, test_point, rv->positions, pr->sensor_num);
+		}; 
+
+		calc_test_distances_bs(&rv->circles[0].radius, sizeof(circle_t), 
+				test_point, &rv->circles[0].center, sizeof(circle_t), pr->sensor_num);
+
 
 		/* create noise */
-/* 		for (int i=0; i < pr->sensor_num; i++) */
-/* 			pr->distances[i] = pr->distances[i] + 0.0001; */
+		for (int i=0; i < pr->sensor_num; i++)
+			rv->circles[i].radius += 0.0001;
 
-		
-		/* initialize circles */
-		for (int i = 0; i < pr->sensor_num; i++) {
-			rv->ft_buffer->circles[i].center = rv->positions[i];
-			rv->ft_buffer->circles[i].radius = rv->distances[i];
-		}
 
-		point_t found_target = find_target(rv->ft_buffer, pr->sensor_num, \
+		point_t found_target = find_target(rv->ft_buffer, rv->circles, pr->sensor_num, \
 				&rv->calibration_data->magnet_projection);
 /* 		serialf("Test target:  (%f, %f)\n", test_point.x, test_point.y); */
 /* 		serialf("Found target: (%f, %f)\n", found_target.x, found_target.y); */

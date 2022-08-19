@@ -5,7 +5,7 @@ MCU=PC
 
 
 PC_BUILDDIR=build/pc
-PC_MAKEOPTS=-Os -Wall -lm -g
+PC_MAKEOPTS=-Os -Wall -lm -ggdb
 PC_MAINFILE=pctest.c
 VALGRIND_OUTPUT=$(PC_BUILDDIR)/valgrind.out
 
@@ -39,6 +39,7 @@ ARD_FLAGS+=$(ARD_INOFILE)
 HEADERS=src/header.h
 HEADERS+=src/config.h
 
+HEADERS+=src/main.h
 HEADERS+=src/analytics.h
 HEADERS+=src/calibration.h
 HEADERS+=src/calculator.h
