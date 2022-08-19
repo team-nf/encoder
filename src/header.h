@@ -77,8 +77,8 @@ typedef char byte;
 #define read_pin(...) printf("read_pin("#__VA_ARGS__");\n")
 #define write_pin(...) printf("write_pin("#__VA_ARGS__");\n")
 
-#define malloc(...) ({ printf("malloc("#__VA_ARGS__");\n"); malloc(__VA_ARGS__); })
-#define free(...) ({ printf("free("#__VA_ARGS__");\n"); free(__VA_ARGS__); })
+#define malloc(size) ({ printf("malloc("#size"); -> %lu bytes.\n", size); malloc(size); })
+#define free(size)	 ({ printf("free("#size");\n"); free(size); })
 
 #define LED_BUILTIN 13
 #define OUTPUT 0

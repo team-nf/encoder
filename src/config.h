@@ -7,6 +7,7 @@
 #ifdef _ARDUINO
 const int _first_sensor_pin_g = A0;
 #else
+#warning _FIRST_SENSOR_PIN_G NOT COMPATIBLE
 const int _first_sensor_pin_g = 0;
 #endif
 

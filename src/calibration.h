@@ -1,12 +1,7 @@
 #ifndef _CALIB_H_INCLUDED
 #define _CALIB_H_INCLUDED
 
-#ifndef _ARDUINO
-#warning CALIBRATION NOT IMPLEMENTED FOR PLATFORM
-
-#else
 #include "header.h"
-#include <EEPROM.h>
 
 
 #define _eeprom_address_g 0
@@ -26,7 +21,16 @@ typedef struct calibration_data_t {
 	sensor_data_t sensor_datas[_sensor_num_g];
 } calibration_data_t;
 
-const calibration_meta_t _example_meta_g = { _calibration_start_g, _version_g, _sensor_num_g };
+
+const calibration_meta_t _example_meta_g = { 
+	_calibration_start_g, _version_g, _sensor_num_g };
+
+
+#ifndef _ARDUINO
+#warning CALIBRATION NOT IMPLEMENTED FOR PLATFORM
+
+#else
+#include <EEPROM.h>
 	
 
 #define calibration_read(start_address) \

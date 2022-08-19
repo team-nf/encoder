@@ -22,31 +22,6 @@ void interrupt_flag_changer(int sig){
 
 /* ========================================== */
 
-#include "header.h"
-
-#define _eeprom_address_g 0
-#define _calibration_start_g "calibeg"
-#define _version_skip_key_g "9999999"
-
-typedef struct calibration_meta_t {
-	char calibration_start[8];
-	char version[8];
-	int sensor_num;
-} calibration_meta_t;
-
-typedef struct calibration_data_t {
-	calibration_meta_t header;
-	circle_t magnet_projection;
-	sensor_data_t sensor_datas[_sensor_num_g];
-} calibration_data_t;
-
-const calibration_meta_t _example_meta_g = {_calibration_start_g, 
-											_version_g, 
-											_sensor_num_g 
-											};
-
-/* ========================================== */
-
 #include "main.h"
 
 
