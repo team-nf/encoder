@@ -21,7 +21,7 @@ Eğer eeprom yoksa sensörler hakkındaki bilgilerin elle girilmesi gerekmektedi
 Kalibrasyon bulunamasına rağmen tekrar kalibre etmek için `src/config.h` dosyasında tanımlanmış olan `calibration_pin_g` sabitinde yazan pin numarasına takılı bir buton (ya da switch) bulunmalıdır.
 Switchin takılı olduğu pini değiştirmek için bu değişkeni değiştirebilirsiniz.
 
-Eğer `src/config.h` dosyasında `_DEBUG` sabiti tanımlanmışsa debug çıktıları `screen /dev/tty<PORT>` komutuyla okunabilir.
+Eğer `src/config.h` dosyasında `_DEBUG` sabiti tanımlanmışsa debug çıktıları `screen /dev/tty<PORT>` komutuyla ya da arduino programının Serial Monitorü yardımıyla okunabilir. (BAUDRATE=115200)
 
 Kodlar üzerindeki konfigürasyon tamamlandıktan sonra `make` komutu ile kodlar seçtiğiniz mikrodenetleyiciye (ya da pcye) göre derlenir. `make upload` komutu da kodları mikrodenetleyiciye yükler.
 Eğer kodları pc için derlediyseniz `make upload` komutu programı çalıştırır.
