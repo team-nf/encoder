@@ -40,5 +40,4 @@ const int _first_sensor_pin_g = 0;
 /* #define _type_long_double */
 
 
-
 #endif
