@@ -55,8 +55,8 @@ bool calibration_check_equals(const calibration_data_t* data1, const calibration
 dbg(void calibration_print(const calibration_data_t* data));
 
 
-#define _calibrate_sensors(_data) _calibrate_sensors(_data, _first_sensor_pin_g)
-bool calibrate_sensors(calibration_data_t* _data, int first_sensor);
+#define _calibrate_sensors(_data) calibrate_sensors(_data, _sensor_pins_g)
+bool calibrate_sensors(calibration_data_t* _data, const int* sensor_pins);
 
 
 
@@ -79,8 +79,8 @@ bool calibration_check_exists(const calibration_meta_t* data_header, const calib
 	if (strcmp(example_meta->calibration_start,	data_header->calibration_start) != 0) { return false; }
 	if (strcmp(example_meta->version,			data_header->version		  ) != 0 && \
 	    strcmp(example_meta->version,			_version_skip_key_g			  ) != 0) { return false; }
-	if (	   example_meta->sensor_num !=			data_header->sensor_num			 && \
-			   example_meta->sensor_num !=			0								) { return false; }
+	if (	   example_meta->sensor_num !=		data_header->sensor_num				 && \
+			   example_meta->sensor_num !=		0									) { return false; }
 	return true;
 }
 
@@ -130,7 +130,7 @@ void calibration_print(const calibration_data_t* data) {
 }
 #endif
 
-bool calibrate_sensors(calibration_data_t* _data, int first_sensor) {
+bool calibrate_sensors(calibration_data_t* _data, const int* sensor_pins) {
 	serialdn("Starting calibration.");
 	/* Eğer debug modundaysak gönderilen datayı kontrol et */
 	dbg(if (!calibration_check_exists(&_data->header, &_example_meta_g)) { return false; })
@@ -141,7 +141,7 @@ bool calibrate_sensors(calibration_data_t* _data, int first_sensor) {
 
 	/* ilk okuma (normal değerleri anlamak için) */
 	for (int i=0; i < sensor_num; i++) {
-		int _pin_val = analogRead(first_sensor+i);
+		int _pin_val = analogRead(sensor_pins[i]);
 		read_values[i] = { _pin_val, _pin_val, _pin_val };
 	}
 
@@ -154,7 +154,7 @@ bool calibrate_sensors(calibration_data_t* _data, int first_sensor) {
 	while (millis() - start_time <= _calibration_length_g * 1000) {
 		for (int i=0; i < sensor_num; i++) {
 			/* sensörlerin sırayla takılmış olması gerekiyor */
-			int read_value = analogRead(first_sensor+i);
+			int read_value = analogRead(sensor_pins[i]);
 			/* eğer en küçük değerden daha küçük değer okunursa en küçük değeri değiştir */
 			if (read_value < read_values[i]._min)		read_values[i]._min = read_value;
 			/* yukardakinin aynısı ama en büyük için */

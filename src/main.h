@@ -13,7 +13,8 @@ struct encoder_init_rv {
 };
 
 struct encoder_init_parameters {
-	int sensor_num, calibration_pin, eeprom_address, first_sensor_pin;
+	int sensor_num, calibration_pin, eeprom_address;
+	const int *sensor_pins;
 	calibration_meta_t example_meta;
 };
 
@@ -29,6 +30,8 @@ bool encoder_init(struct encoder_init_rv* rv_buffer, struct encoder_init_paramet
 
 	set_pin(LED_BUILTIN, OUTPUT);
 	set_pin(pr->calibration_pin, INPUT);
+	for (int i = 0; i < pr->sensor_num; i++)
+		set_pin(pr->sensor_pins[i], INPUT);
 
 	/* calibration.h setup */
 #ifdef _ARDUINO
@@ -39,7 +42,7 @@ bool encoder_init(struct encoder_init_rv* rv_buffer, struct encoder_init_paramet
 
  	if (!valid_calib || read_pin(pr->calibration_pin) == HIGH) {
  		while (!valid_calib) {
- 			valid_calib = calibrate_sensors(rv->calibration_data, pr->first_sensor_pin);
+ 			valid_calib = calibrate_sensors(rv->calibration_data, pr->sensor_pins);
  			if (valid_calib == 0) serialdn("Calibration failed.");
  		}
  		calibration_write(pr->eeprom_address, rv->calibration_data);

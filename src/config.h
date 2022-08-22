@@ -4,16 +4,19 @@
 
 
 /* == General == */
-#ifdef _ARDUINO
-const int _first_sensor_pin_g = A0;
-#else
-#warning _FIRST_SENSOR_PIN_G NOT COMPATIBLE
-const int _first_sensor_pin_g = 0;
-#endif
-
 #define _sensor_num_g 3
 #define _DEBUG
 #define _ONEFILE
+
+
+#ifdef _ARDUINO
+const int _sensor_pins_g[_sensor_num_g] = {A0, A1, A2};
+/* const int _first_sensor_pin_g = A0; */
+#else
+#warning _FIRST_SENSOR_PIN_G NOT COMPATIBLE
+const int _sensor_pins_g[_sensor_num_g] = {0, 1, 2};
+/* const int _first_sensor_pin_g = 0; */
+#endif
 
 
 #ifdef _ONEFILE

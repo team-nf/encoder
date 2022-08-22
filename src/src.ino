@@ -18,7 +18,7 @@ void loop() {
 	struct encoder_init_parameters parameters = {_sensor_num_g,
 												 _calibration_pin_g,
 												 _eeprom_address_g,
-												 _first_sensor_pin_g,
+												 _sensor_pins_g,
 												 _example_meta_g
 												};
 	struct encoder_init_rv init_rv;

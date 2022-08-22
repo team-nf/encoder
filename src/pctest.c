@@ -31,7 +31,7 @@ int main() {
 	struct encoder_init_parameters parameters = {.sensor_num = _sensor_num_g,
 												 .calibration_pin = _calibration_pin_g,
 												 .eeprom_address = _eeprom_address_g,
-												 .first_sensor_pin = _first_sensor_pin_g,
+												 .sensor_pins = _sensor_pins_g,
 												 .example_meta = _example_meta_g
 												};
 	struct encoder_init_rv init_rv;
@@ -55,11 +55,13 @@ int main() {
 /* 		} */
 /* 		wait(6000); */
 /* 	} */
+
 	if(!encoder_loop(&init_rv, &parameters)) {
 		serialdn("Encoder loop failed.");
 	} else { 
 		serialdn("Encoder loop succeeded.");
 	} 
+
 	return 0;
 }
 
