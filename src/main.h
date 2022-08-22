@@ -27,7 +27,6 @@ bool encoder_init(struct encoder_init_rv* rv_buffer, struct encoder_init_paramet
 #define pr parameters
 #define rv rv_buffer
 
-	serialdn("\nStarted.");
 	set_pin(LED_BUILTIN, OUTPUT);
 	set_pin(pr->calibration_pin, INPUT);
 

@@ -41,20 +41,25 @@ int main() {
 		wait(3000);
 	} serialdn("Encoder init succeeded.");
 
-	while(true) {
-		if(!encoder_loop(&init_rv, &parameters)) {
-			serialdn("Encoder loop failed.");
-		} else { 
-			serialdn("Encoder loop succeeded.");
-		} 
-
+/* 	while(true) { */
+/* 		if(!encoder_loop(&init_rv, &parameters)) { */
+/* 			serialdn("Encoder loop failed."); */
+/* 		} else {  */
+/* 			serialdn("Encoder loop succeeded."); */
+/* 		}  */
+/*  */
 		/* Keyboard intterupt gelirse */
-		if (_flag_g) {
-			encoder_free(&init_rv); 
-			break;
-		}
-		wait(6000);
-	}
+/* 		if (_flag_g) { */
+/* 			encoder_free(&init_rv);  */
+/* 			break; */
+/* 		} */
+/* 		wait(6000); */
+/* 	} */
+	if(!encoder_loop(&init_rv, &parameters)) {
+		serialdn("Encoder loop failed.");
+	} else { 
+		serialdn("Encoder loop succeeded.");
+	} 
 	return 0;
 }
 
