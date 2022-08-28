@@ -47,7 +47,7 @@ Kullandığınız arduinonun türü de `Makefile` dosyası içindeki `ARD_BOARD`
 Pico kullancaksanız `Makefile` dosyası içindeki `PICO_MOUNTPATH` değişkeni piconuzu bağladığınız pathe göre değiştirilmelidir. Eğer kodları manuel yüklemek isterseniz `build/pico/encoder.uf2` dosyasını piconun içine kopyalayabilirsiniz.
 
 ### Sensörlerin takılı olduğu pinleri değiştirmek
-DÜZENLEME GEREKİYOR
+DÜZENLEME GEREKİYOR!
 
 ### Sensör sayısını değiştirmek
 `src/config.h` dosyası içindeki `_sensor_num_g` sabiti değiştirilmelidir. En az 3 sensör önerilir.
