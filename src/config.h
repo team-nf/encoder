@@ -8,15 +8,7 @@
 #define _DEBUG
 #define _ONEFILE
 
-
-#ifdef _ARDUINO
-const int _sensor_pins_g[_sensor_num_g] = {A0, A1, A2};
-/* const int _first_sensor_pin_g = A0; */
-#else
-#warning _FIRST_SENSOR_PIN_G NOT COMPATIBLE
 const int _sensor_pins_g[_sensor_num_g] = {0, 1, 2};
-/* const int _first_sensor_pin_g = 0; */
-#endif
 
 
 #ifdef _ONEFILE
@@ -35,6 +27,7 @@ const int _sensor_pins_g[_sensor_num_g] = {0, 1, 2};
 
 
 /* == Circle Intersection == */
+/* #define _tolerance_g 0.000000000000001 */
 #define _tolerance_g 0.0001
 #define _skip_perfect_check
 

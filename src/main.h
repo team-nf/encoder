@@ -1,9 +1,5 @@
 #include "calculator.h"
-
-#ifndef _PICO
-/* picoda eeprom olmadığından ufak bir problem */
 #include "calibration.h"
-#endif
 
 
 struct encoder_init_rv {
@@ -84,7 +80,7 @@ bool encoder_loop(struct encoder_init_rv* init_rv, struct encoder_init_parameter
 
 		/* create noise */
 		for (int i=0; i < pr->sensor_num; i++)
-			rv->circles[i].radius += 0.0001;
+			rv->circles[i].radius += _tolerance_g;
 
 
 		point_t found_target = find_target(rv->ft_buffer, rv->circles, pr->sensor_num, \

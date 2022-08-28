@@ -8,8 +8,9 @@
 
 #define _max_intersections_g _sensor_num_g * (_sensor_num_g-1) / 2
 
-/* b iki kere çağırılacak :-/ */
+/* Floating point sayılardaki hassasiyetten kaynaklanan problemleri çözmek için */
 #define check_wt(a, b) (b - _tolerance_g < a && a < b + _tolerance_g)
+/* b iki kere çağırılacak :-/ */
 /* neyse */
 #define check_wts(a, b) {(\
 		typeof(a) _a = a; typeof(b) _b = b; \

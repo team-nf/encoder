@@ -57,7 +57,7 @@ typedef struct circle_t {
 #ifdef _PICO
 #define start_serial_connection() stdio_init_all()
 #define wait(ms) sleep_ms(ms)
-#define set_pin(pin, mode) gpio_init(pin); gpio_set_dir(pin, mode)
+#define set_pin(pin, mode) ({ gpio_init(pin); gpio_set_dir(pin, mode); })
 #define read_pin(pin) gpio_get(pin)
 #define write_pin(pin, state) gpio_put(pin, state)
 /* BURAYA BAK */
