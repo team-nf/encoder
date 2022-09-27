@@ -1,7 +1,7 @@
 PROJECT_NAME=encoder
 # MCU=PICO
-# MCU=ARDUINO
-MCU=PC
+MCU=ARDUINO
+# MCU=PC
 
 
 PC_BUILDDIR=build/pc
@@ -22,7 +22,7 @@ ARD_BOARD=arduino:avr:uno
 # ARD_BOARD=arduino:mbed_rp2040:pico
 # ARD_BOARD=arduino:mbed:pico
 
-ARD_PORT=/dev/ttyUSB0
+ARD_PORT=/dev/ttyACM0
 ARD_CLI=~/.programs/arduino-cli/arduino-cli
 # Makefile ile aynı klasörde olmalı
 ARD_INOFOLDER=src

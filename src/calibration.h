@@ -130,10 +130,19 @@ void calibration_print(const calibration_data_t* data) {
 }
 #endif
 
+
 bool calibrate_sensors(calibration_data_t* _data, const int* sensor_pins) {
 	serialdn("Starting calibration.");
 	/* Eğer debug modundaysak gönderilen datayı kontrol et */
-	dbg(if (!calibration_check_exists(&_data->header, &_example_meta_g)) { return false; })
+	/* dbg(if (!calibration_check_exists(&_data->header, &_example_meta_g)) { return false; }) */
+
+	/* Eğer verilen datada hata varsa düzelt */
+	if (!calibration_check_exists(&_data->header, &_example_meta_g)) {
+		serialdn("Calibration header not valid\nRewriting...");
+		_data->header = _example_meta_g;
+	}
+
+
 	/* Biraz da olsun hız kazanmak için */
 	int sensor_num = _data->header.sensor_num;
 	/* Okunan değerleri kaydetmek için kullanılacak array */
@@ -172,14 +181,21 @@ bool calibrate_sensors(calibration_data_t* _data, const int* sensor_pins) {
 
 #ifdef _DEBUG
 	/* biraz debug info */
-	serialfn("Read %d sensors %lu times in %d seconds.", sensor_num, counter, _calibration_length_g);
+	serialfn("Read %u sensors %lu times in %d seconds.", sensor_num, counter, _calibration_length_g);
 	for (int i=0; i < sensor_num; i++)
 		serialf("Sensor %d:\n\t[min]\t\tread: %d\n\t[normal]\tread: %d\n\t[max]\t\tread: %d\n", i,	\
 			read_values[i]._min, read_values[i]._normal, read_values[i]._max);
 #endif
 
+	/* BURAYI DÜZELT */
+	_data->magnet_projection.center = {0, 0};
+	_data->magnet_projection.radius = 0.10;
+
 	/* eğer okunan veri geçerli değilse değişiklikleri verilen dataya yazmadan çık */
-	if (calibration_check_sensor_data(read_values, sensor_num) == 0) { return false; }
+	if (calibration_check_sensor_data(read_values, sensor_num) == 0) { 
+		serialdn("calibration_check_sensor_data failed");	
+		return false;
+	}
 	/* okunan veri geçerliyse dataya yaz */
 	memcpy(_data->sensor_datas, read_values, sensor_num * sizeof(sensor_data_t));
 
