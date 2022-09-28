@@ -132,7 +132,6 @@ void calibration_print(const calibration_data_t* data) {
 
 
 bool calibrate_sensors(calibration_data_t* _data, const int* sensor_pins) {
-	serialdn("Starting calibration.");
 	/* Eğer debug modundaysak gönderilen datayı kontrol et */
 	/* dbg(if (!calibration_check_exists(&_data->header, &_example_meta_g)) { return false; }) */
 

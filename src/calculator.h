@@ -53,9 +53,11 @@ void calc_test_distances_bs
 	 const void *sensor_positions, int positions_step, int sensor_num);
 
 
+/* find_target tarafından kullanılacak değişkenlerin tutulduğu yer */
+/* her seferinde tekrar malloc yapmakla zaman harcamamak */ 
+/* için program başında sadece bir kere malloc yapılıyor */
 struct ft_buffer {
 	point_t _inter_rv[2];
-	point_t intersections[_max_intersections_g];
 }; 
 
 point_t find_target(struct ft_buffer *buffer, circle_t *circles, int sensor_num, circle_t* magnet_projection);
@@ -144,6 +146,18 @@ point_t find_target(struct ft_buffer *buffer, circle_t *circles, int sensor_num,
 
 	/* eğer üstteki döngü bir tur bile ilerlediyse bu döngüyü yapmamız tamamen anlamsız oluyor */
 	/* sebebini burada açıklamam ne kadar doğru olur bilmiyorum kısa bir açıklama değil çünkü */
+
+	/* ufak bir açıklama yapmaya karar verdim */
+	/* 13 satır yukarıda inter_rv içine ilk iki çemberin iki kesişim noktasını yazıyoruz */
+	/* yukarıdaki döngü iki kesişim noktasından ilkinin tüm çemberlerin üzerinde olup */
+	/* olmadığını kontrol ediyor. Hemen aşağıdaki döngü de ikinci kesişim noktası için */
+	/* kontrolleri yapıyor. */
+	/* Şimdi eğer ilk kesişim noktası tüm çemberler üzerinde değilse ama 3 veya daha fazla */
+	/* çember üzerindeyse, ikinci kesişim noktasını tekrar kontrol etmeye gerek kalmıyor */
+	/* çünkü, ikinci kesişim noktasının, ilk kesişim noktasının üzerinde bulunduğu çemberlerin */
+	/* üzerinde bulunmayacağını biliyoruz. Matematiksel olarak söylediğim cümlenin doğruluğunu */
+	/* kanıtlamayacağım ama 3 çemberin aynı anda 2 noktada kesişememesinden bi şeyler bulunabilir */
+	/* (çemberler aynı olmadığı sürece tabii). */
 	if (i == 2) {	
 		/* biraz düşün belki hatırlarsın (gelecekteki bana not) */
 		for (; i < sensor_num; i++) {
@@ -156,15 +170,27 @@ point_t find_target(struct ft_buffer *buffer, circle_t *circles, int sensor_num,
 	/* === Eğer elimizdeki değerler mükemmel bir nokta oluşturmuyorsa === */
 	/*				(ki yüksek ihtimalle oluşturmayacak)				  */
 	
-	/* normalde maksimum kesişme sayısı aşağıdakinin 2 katı ama her kesişmenin *
-	 * noktaya yakın olan kısmını alacağız o yüzden 2 ile çarpmamız gerekmiyor */
-	int intersections_len = 0;
+	/* normalde bizim magnet projectionımıza yakın olan noktaların hepsini bir arrayde */ 
+	/* topluyorduk ama yeni güncellemeyle her noktanın kaydedlmesini kaldırdım ve hafıza */ 
+	/* kullanımı (intersection_len * 8) byte azaldı (intersection_len de c(sensor_num, 2) */
+	/* üzerinden hesaplanıyor. Artık projectiona yakın olan nokta hesaplandıktan sonra */
+	/* noktanın kordinatlarını kaydetmek yerine noktaların kordinatlarını aşağıdaki değişkenlerde */ 
+	/* topluyoruz. Sonrasında toplam kesişim sayısına bölerek ortalamasını alıyoruz */
+	ftype sumx = 0, sumy = 0;
 	
 #ifndef _skip_perfect_check
+	/* eğer perfect check açıksa zaten kesin olarak ilk iki çemberi kesiştirdik  */
+	/* elde ettiğimiz iki kesişim noktasından bizim magnet_projectionımıza daha yakın olanı suma ekle */
 	if (point_distanceto_circle(&inter_rv[0], magnet_projection) > 
-			point_distanceto_circle(&inter_rv[1], magnet_projection)) {
-		intersections[0] = inter_rv[1];
-	} else { intersections[0] = inter_rv[0]; }
+			point_distanceto_circle(&inter_rv[1], magnet_projection)) 
+	{
+		sumx += inter_rv[1].x;
+		sumy += inter_rv[1].y;
+	} else {
+		sumx += inter_rv[0].x;
+		sumy += inter_rv[0].y;
+	}
+
 	for (i = 1; i < sensor_num; i++) {
 #endif
 
@@ -178,16 +204,21 @@ point_t find_target(struct ft_buffer *buffer, circle_t *circles, int sensor_num,
 				serialdn("cicb error encoder-98"); 
 			}
 
-			/* bizim mıknatısın yoluna daha yakın olanı kaydet */
+			/* bizim mıknatısın yoluna daha yakın olanı suma ekle */
 			if (point_distanceto_circle(&inter_rv[0], magnet_projection) > 
 					point_distanceto_circle(&inter_rv[1], magnet_projection))
-				intersections[intersections_len++] = inter_rv[1];
-			else intersections[intersections_len++] = inter_rv[0];
+			{
+				sumx += inter_rv[1].x;
+				sumy += inter_rv[1].y;
+			} else {
+				sumx += inter_rv[0].x;
+				sumy += inter_rv[0].y;
+			}
 		}
 	}
 
-	/* toplanan kesişim noktalarının ortalamasını al */
-	return points_find_center(intersections, intersections_len);
+	point_t result = { sumx/_max_intersections_g, sumy/_max_intersections_g };
+	return result;
 #undef intersections
 #undef inter_rv
 }

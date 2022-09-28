@@ -110,6 +110,7 @@ point_t points_find_center(const point_t* points, int point_num) {
 		sum.x += points[i].x;
 		sum.y += points[i].y;
 	}
+	serialfn("points_find_center sumx: %f, sumy: %f", sum.x, sum.y);
 	sum.x /= point_num;
 	sum.y /= point_num;
 	return sum;	
