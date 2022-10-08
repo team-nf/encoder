@@ -1,22 +1,24 @@
+/*
+This file is part of ncoder.
+Copyright (C) 2022 Tuna Gül, Yüşa Furkan Erenci
 
-#define serialf(...) ({ \
-	int _size = snprintf(NULL, 0, __VA_ARGS__) + 1; \
-	char* _str = (char *)malloc(_size * sizeof(char)); \
-	snprintf(_str, _size, __VA_ARGS__); \
-	Serial.print(_str); \
-	free(_str); \
-})
+SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+#define _sensor_num_g 1
+const int _sensor_pins_g[] = {A0};
+
 
 void setup() {
 	Serial.begin(115200);
-	Serial.println("Started.");
+	pinMode(sensor_pin_g, OUTPUT);
 }
 
 void loop() {
-	int first_pin = A0;
-	int sensor_num = 3;
-	for (int i=0; i < sensor_num; i++)
-		serialf("AnalogRead %d: %d\t", i, analogRead(first_pin+i));
-	serialf("\n");
-	delay(500);
+	for (int i = 0; i < _sensor_num_g; i++) {
+		Serial.print(analogRead(_sensor_pins_g[i]));
+		Serial.print(" ");
+	} 
+	Serial.println("");
+	delay(20);
 }

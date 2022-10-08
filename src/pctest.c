@@ -1,3 +1,10 @@
+/*
+This file is part of ncoder.
+Copyright (C) 2022 Tuna Gül, Yüşa Furkan Erenci
+
+SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
 #ifndef __AVR
 
 /* sleep() fonksiyonu için */

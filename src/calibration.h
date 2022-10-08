@@ -1,3 +1,10 @@
+/*
+This file is part of ncoder.
+Copyright (C) 2022 Tuna Gül, Yüşa Furkan Erenci
+
+SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
 #ifndef _CALIB_H_INCLUDED
 #define _CALIB_H_INCLUDED
 
@@ -130,6 +137,21 @@ void calibration_print(const calibration_data_t* data) {
 }
 #endif
 
+/*bu fonksiyon calibrate_sensor() içerisinde çağrılır.*/
+/*DÜZELT, sensor_data_t olmaz farklı bir şey lazım.*/
+bool calc_magnet_projection(calibration_data_t* _data, sensor_data_t* _sensor_data, int sensor_num) {
+/*burda yapmam gereken _data.magnet_projection'ı sensörlerden aldığım veriye göre hesaplamak*/
+	serialdn("Calculating magnet projection...\n");
+	for (i = 0; i < sensor_num; i++) {
+		for (j = 1; j < sensor_num; j++) {
+			for (k = 2; j < sensor_num; k++) {
+				/*max - min*/
+				serialdn("in loop");
+		}
+	}
+}	
+#endif
+}
 
 bool calibrate_sensors(calibration_data_t* _data, const int* sensor_pins) {
 	/* Eğer debug modundaysak gönderilen datayı kontrol et */

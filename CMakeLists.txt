@@ -1,3 +1,7 @@
+# This file is part of ncoder.
+# Copyright (C) 2022 Tuna Gül, Yüşa Furkan Erenci
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # Set minimum required version of CMake
 cmake_minimum_required(VERSION 3.12)
 
