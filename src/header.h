@@ -76,15 +76,27 @@ typedef struct circle_t {
 
 #ifdef _PC
 typedef enum { false=0, true=1 } bool;
-typedef char byte;
 #define start_serial_connection() 
+
+
+#ifdef _WIN32
+#include <Windows.h>
+#define wait(ms) Sleep(ms/1000);
+#define malloc(size) ({ printf("malloc("#size"); -> %u bytes.\n", size); malloc(size); })
+
+#else
+typedef char byte;
+#include <unistd.h>
 #define wait(ms) sleep(ms/1000);
+#define malloc(size) ({ printf("malloc("#size"); -> %lu bytes.\n", size); malloc(size); })
+
+#endif
+
 
 #define set_pin(...) printf("set_pin("#__VA_ARGS__");\n")
 #define read_pin(...) printf("read_pin("#__VA_ARGS__");\n")
 #define write_pin(...) printf("write_pin("#__VA_ARGS__");\n")
 
-#define malloc(size) ({ printf("malloc("#size"); -> %lu bytes.\n", size); malloc(size); })
 #define free(size)	 ({ printf("free("#size");\n"); free(size); })
 
 #define LED_BUILTIN 13

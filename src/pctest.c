@@ -7,13 +7,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef __AVR
 
-/* sleep() fonksiyonu için */
-#ifdef _WIN32
-#include <Windows.h>
-#else
-#include <unistd.h>
-#endif
-
 #include <stdio.h>
 #define _PC
 
